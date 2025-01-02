@@ -1,5 +1,6 @@
 import rows, { Data } from '@/utils/Demo/demo'
-import { Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
+import { ArrowCircleLeft, West } from '@mui/icons-material'
+import { Button, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
@@ -21,6 +22,11 @@ const DetailView = () => {
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
+      <Stack display={"felx"} flexDirection={"row"}>
+        <Button href='/jobs'  sx={{border:1}} >
+          <West/>
+        </Button>
+      </Stack>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2}>
         Job Details
       </Typography>

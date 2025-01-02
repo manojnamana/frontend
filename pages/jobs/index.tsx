@@ -130,7 +130,7 @@ export default function Jobs() {
       >
         <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} alignItems={'center'} p={2}>
           <Typography fontSize={25} fontWeight={'bold'} color='primary'>
-            Jobs
+            Jobs Listing
           </Typography>
           <Stack >
             <Link href="/jobs/create">
