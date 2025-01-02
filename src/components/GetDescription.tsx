@@ -1,4 +1,4 @@
-import { AutoAwesome } from '@mui/icons-material'
+import { AutoAwesome, West } from '@mui/icons-material'
 import { Stack, Typography, Paper, TextField, Button, Snackbar, Alert,Grid, SnackbarCloseReason } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -55,6 +55,11 @@ const GetDescription = ({companyName}:any) => {
       };
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
+      <Stack display={"felx"} flexDirection={"row"}>
+              <Button href='/jobs'  sx={{border:1}} >
+                <West/>
+              </Button>
+            </Stack>
     <Typography
       variant="h4"
       color="#8257dc"

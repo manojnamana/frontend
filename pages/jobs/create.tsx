@@ -4,7 +4,7 @@ import { Grid, Stack, TextField, Typography, Button, Snackbar, Alert, Paper } fr
 import { useForm, Controller } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AutoAwesome } from '@mui/icons-material';
+import { AutoAwesome, West } from '@mui/icons-material';
 import { Save } from 'lucide-react';
 import GetDescription from '@/src/components/GetDescription';
 
@@ -73,6 +73,11 @@ if (dis){
 else{
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
+      <Stack display={"felx"} flexDirection={"row"}>
+              <Button href='/jobs'  sx={{border:1}} >
+                <West/>
+              </Button>
+            </Stack>
       <Typography
         variant="h4"
         color="#8257dc"
