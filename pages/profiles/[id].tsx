@@ -23,7 +23,7 @@ const DetailView = () => {
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2}>
-        Job Details
+        Profile Details
       </Typography>
       <Paper elevation={3} sx={{p:3,display:"flex", flexDirection:"column",gap:2}}>
 

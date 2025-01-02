@@ -193,7 +193,7 @@ const CollapsibleLibrary = () => {
       />
       <NavMenuItem
         icon={Work}
-        label={isSmallScreen ? 'Jobs' : ''}
+        label={isSmallScreen ? 'Jobs Listing' : ''}
         isActive={activeComponent === '/jobs'}
         onClick={() => {setActiveComponent('/jobs'),route.push('/jobs')}
 

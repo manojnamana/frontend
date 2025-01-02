@@ -49,6 +49,8 @@ export default function App() {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  console.log(files)
+
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2} >

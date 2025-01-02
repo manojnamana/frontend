@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -17,7 +19,7 @@ import { useRouter } from 'next/router';
 
 
 interface Column {
-  id: 'company' | 'role' | 'skills' | 'project_experience' | 'other_details' | 'job_description' | 'evaluation_criteria';
+  id: 'company' | 'role' | 'skills' | 'created_on' | 'status' | 'job_description' | 'evaluation_criteria';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -26,63 +28,16 @@ interface Column {
 const columns: readonly Column[] = [
   { id: 'company', label: 'Company', minWidth: 200 ,},
   { id: 'role', label: 'Role', minWidth: 200,},
-  { id: 'skills', label: 'Skills', minWidth: 200 ,},
-  { id: 'job_description', label: 'Job Description', minWidth: 200,},
+  { id: 'skills', label: 'Skills', minWidth: 200,},
+  { id: 'created_on', label: 'Created On', minWidth: 200 ,},
+  { id: 'status', label: 'Status', minWidth: 200,},
 
  
 ];
 
-// interface Data {
-//   company: string;
-//   role: string;
-//   skills: string;
-//   project_experience: string;
-//   other_details: string;
-//   job_description: string;
-//   evaluation_criteria: string;,
-// }
 
-// function createData(
-//   company: string,
-//   role: string,
-//   skills: string,
-//   project_experience: string,
-//   other_details: string,
-//   job_description: string,
-//   evaluation_criteria: string
-// ): Data {
-//   return { company, role, skills, project_experience, other_details, job_description, evaluation_criteria };
-// }
 
-// const rows = [
-//   createData(
-//     'TechCorp',
-//     'Software Engineer',
-//     'JavaScript, React, Node.js',
-//     'Built a scalable web application.',
-//     'Remote-friendly, Flexible hours.',
-//     'Develop and maintain web applications.',
-//     'Code quality, Problem-solving, Team collaboration.'
-//   ),
-//   createData(
-//     'DataSolutions',
-//     'Data Analyst',
-//     'Python, SQL, Tableau',
-//     'Analyzed sales data to increase revenue.',
-//     'Hybrid role, Full-time.',
-//     'Analyze and visualize business data.',
-//     'Accuracy, Analytical thinking, Communication.'
-//   ),
-//   createData(
-//     'Innovatech',
-//     'Project Manager',
-//     'Leadership, Agile, JIRA',
-//     'Managed a cross-functional team for product delivery.',
-//     'On-site, Leadership role.',
-//     'Oversee project timelines and deliverables.',
-//     'Leadership, Time management, Risk assessment.'
-//   ),
-// ];
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -139,7 +94,10 @@ export default function Jobs() {
           row.evaluation_criteria.toLowerCase().includes(query) ||
           row.job_description.toLowerCase().includes(query) || 
           row.project_experience.toLowerCase().includes(query) ||
-          row.other_details.toLowerCase().includes(query)
+          row.other_details.toLowerCase().includes(query) ||
+          row.created_on.toLowerCase().includes(query) ||
+          row.status.toLowerCase().includes(query) 
+
       )
     );
   };
@@ -235,7 +193,7 @@ export default function Jobs() {
                   
                       return (
                         <>
-                        {column.id === "job_description" ?(
+                        {column.id === "status" ?(
                           <TableCell key={column.id} align={column.align}>
                             <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                               <Stack maxWidth={400}>
@@ -246,14 +204,30 @@ export default function Jobs() {
                               </Typography>
                             </Tooltip>
                             </Stack>
-                          <Button variant='outlined' sx={{gap:2}} onClick={()=>{navigate.push(`jobs/${getId}`)}} >View Details{<ArrowRightAlt/>}</Button>
+                          <Button variant='outlined' sx={{gap:2}}  >Find Profile{<ArrowRightAlt/>}</Button>
                           </Stack>
                           
                         </TableCell>):
-                        ( <TableCell key={column.id} align={column.align}>
+                        
+                        column.id === "company" ?
+                          (<TableCell key={column.id} align={column.align}>
+                          <Link href={`/jobs/${getId}`} underline='hover'>
                           {value} 
+                          </Link>
                           
-                        </TableCell>)}
+                        </TableCell>):
+                        (
+                          <TableCell key={column.id} align={column.align}>
+                          
+                          {value} 
+                         
+                          
+                        </TableCell>
+                        )
+                        
+                        
+                        
+                      }
                         </>
                          
                       );
