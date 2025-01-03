@@ -183,6 +183,14 @@ const CollapsibleLibrary = () => {
 
         }
       />
+       <NavMenuItem
+        icon={People}
+        label={isSmallScreen ? 'Take Interview' : ''}
+        isActive={activeComponent === '/takeinterview'}
+        onClick={() => {setActiveComponent('/takeinterview'),route.push('/takeinterview')}
+
+        }
+      />
     </List>
   </Box>
 

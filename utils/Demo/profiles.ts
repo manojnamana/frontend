@@ -8,7 +8,8 @@ export interface Data {
     viewResume:string;
     match:string;
     status:string;
-    actionTaken:string
+    actionTaken:string;
+    interviewDateAndTime:string
   }
   
   function createData(
@@ -21,9 +22,9 @@ export interface Data {
     viewResume:string,
     match:string,
     status:string,
-    actionTaken:string
+    actionTaken:string,interviewDateAndTime:string
   ): Data {
-    return { resumeId, name, role, email, resume_text, mobile,viewResume,match,status,actionTaken};
+    return { resumeId, name, role, email, resume_text, mobile,viewResume,match,status,actionTaken,interviewDateAndTime};
   }
   
   const ProfileRows = [
@@ -37,7 +38,8 @@ export interface Data {
       '/view/john-doe-resume',
       '80%',
       'In process',
-      'Select'
+      'Select',
+      '2025-01-01 9:30 AM'
     ),
     createData(
       '2',
@@ -49,7 +51,8 @@ export interface Data {
       '/view/jane-smith-resume',
       '90%',
       'Rejected',
-      'Reject'
+      'Reject',
+      '2025-01-01 9:30 AM'
     ),
     createData(
       '3',
@@ -61,7 +64,8 @@ export interface Data {
       '/view/alice-johnson-resume',
       '85%',
       'Rejected',
-      'Reject'
+      'Reject',
+      '2025-01-01 9:30 AM'
     ),
     createData(
       '4',
@@ -73,7 +77,8 @@ export interface Data {
       '/view/bob-brown-resume',
       '70%',
       'In process',
-      'Schedule Interview'
+      'Schedule Interview',
+      '2025-01-01 9:30 AM'
     ),
     createData(
       '5',
@@ -85,7 +90,8 @@ export interface Data {
       '/view/eve-davis-resume',
       '95%',
       'Selected',
-      'Select'
+      'Select',
+      '2025-01-01 9:30 AM'
     ),
   ];
   
