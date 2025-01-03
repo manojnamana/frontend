@@ -37,11 +37,7 @@ export default function App() {
     };
 
   const handleChange = (newFiles) => {
-    if (files.length + newFiles.length > 5) {
-    //   alert("You can upload up to 5 files only.");
-      setOpen(true)
-      return;
-    }
+
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
@@ -49,7 +45,6 @@ export default function App() {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  console.log(files)
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
@@ -106,9 +101,7 @@ export default function App() {
           </Typography>
         )}
       </Box>
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        Uploaded {files.length}/5 files
-      </Typography>
+     
       </Paper>
             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
               <Alert

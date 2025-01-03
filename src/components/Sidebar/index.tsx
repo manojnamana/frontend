@@ -35,8 +35,6 @@ import {
   GraduationCap,
   Loader,
 } from 'lucide-react';
-// import Library from '../src/components/library';
-// import Profile from '../src/components/landing';
 import { AccountCircle, Logout, People, Work } from '@mui/icons-material';
 import Admin from '@/pages/home';
 import Jobs from '@/pages/jobs';
@@ -161,28 +159,6 @@ const CollapsibleLibrary = () => {
   }}
 >
   <Box>
-    {/* <Box
-      sx={{
-        p: 2,
-        borderBottom: 1,
-        borderColor: 'divider',
-        display: {md:'none'},
-        alignItems: 'center',
-        justifyContent: 'space-between',
-
-      }}
-    >
-      {isSidebarOpen ? (
-        <GradientText variant="h6" fontWeight="bold">
-          MediLearn
-        </GradientText>
-      ) : (
-        <GraduationCap size={24} color={darkTheme.palette.primary.main} />
-      )}
-      <IconButton sx={{pl:2}} onClick={() => setSidebarOpen(!isSidebarOpen)}>
-        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </IconButton>
-    </Box> */}
 
     <List sx={{ px: 2 }}>
       <NavMenuItem
@@ -201,7 +177,7 @@ const CollapsibleLibrary = () => {
       />
       <NavMenuItem
         icon={People}
-        label={isSmallScreen ? 'Profiles' : ''}
+        label={isSmallScreen ? 'Match Profiles' : ''}
         isActive={activeComponent === '/profiles'}
         onClick={() => {setActiveComponent('/profiles'),route.push('/profiles')}
 

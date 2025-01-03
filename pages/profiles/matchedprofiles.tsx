@@ -1,6 +1,6 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Button, Checkbox, Chip, FormControlLabel, FormGroup, IconButton, InputBase, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -100,21 +100,21 @@ const Matchedprofiles = () => {
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
     <Paper elevation={3} sx={{display:"flex",flexDirection:"column",p:2,gap:2}}>
-        <Stack display={"flex"} flexDirection={"row"} gap={4} >
+        <Stack display={"flex"} flexDirection={"row"} gap={4} sx={{justifyContent:"center"}}>
         <Typography fontSize={18}>Company Name</Typography>
         <Typography fontSize={18}>Role</Typography>
         </Stack>
-        <Stack display={"flex"} flexDirection={"row"}  gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
-        <Button variant="outlined" fullWidth  startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
+        <Stack display={"flex"} flexDirection={"row"}  gap={2} sx={{justifyContent:"center"}}>
+        <Button variant="contained" sx={{width:300}}  startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
                 Upload
               </Button>
-            <Button variant='outlined' fullWidth >Fetch from Linkedin</Button>
-            <Button variant='outlined' fullWidth  sx={{height:38}}> <Checkbox />
-              Include resumes</Button>
-<Button variant='contained' fullWidth onClick={()=>{setRelevantProfiles(true)}} >Find Relevant Resumes</Button>
+            <Button variant='contained' sx={{width:300}}>Fetch from Linkedin</Button>
+            <FormGroup sx={{ml:1}}>
+  <FormControlLabel sx={{width:300,border:1,borderColor:"#8257dc",borderRadius:1}} control={<Checkbox />} label="Include resumes " />
+</FormGroup>
         </Stack>
 
-        
+        <Button variant='contained' fullWidth onClick={()=>{setRelevantProfiles(true)}} >Find Relevant Resumes</Button>
 
     </Paper>
 
