@@ -48,7 +48,7 @@ const Screen6 = () => {
 
 <Stack direction={"row"} gap={4} mt={4}>
     <Button variant='contained' href='/takeinterview/upload' >Upload Transcript</Button>
-    {(isUploaded || ans?.w) &&<Button variant='contained'  >Generate Assessment Report</Button>}
+    {(isUploaded || ans?.w) &&<Button variant='contained'  href='/viewassessmentreport/1' >Generate Assessment Report</Button>}
 </Stack>
             </Stack>
         </Paper>
