@@ -108,7 +108,7 @@ export default function App() {
         )}
 
         <Stack>
-          <Button variant="contained" sx={{mt:2}}>Upload</Button>
+          <Button variant="contained" href="/takeinterview/1/?w=true" sx={{mt:2}}>Upload</Button>
         </Stack>
       </Box>
 

@@ -1,6 +1,6 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Alert, Button, Checkbox, Chip, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -71,7 +71,7 @@ const Matchedprofiles = () => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [filteredRows, setFilteredRows] = React.useState(ProfileRows);
     const [relevantProfiles,setRelevantProfiles] = React.useState(false);
-        const [open, setOpen] = React.useState(false);
+        const [Dialogopen, setDialogOpen] = React.useState(false);
 
     
         const handleClose = (
@@ -85,8 +85,18 @@ const Matchedprofiles = () => {
             setOpen(false);
 
           };
+
+            const [open, setOpen] = React.useState(false);
+          
+          
+          const handleDialogClose = ()=>{
+            setDialogOpen(false)
+          }
+
   
     const navigate = useRouter()
+    const ans = navigate?.query
+    
   
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
@@ -119,7 +129,7 @@ const Matchedprofiles = () => {
         <Typography fontSize={18}>Software Engineer</Typography>
         </Stack>
         <Stack display={"flex"} flexDirection={"row"}  gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
-        <Button variant="outlined" fullWidth href='profiles/upload' startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
+        <Button variant="outlined" fullWidth  onClick={()=>{setDialogOpen(true)}} startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
                 Upload
               </Button>
             <Button variant='outlined' fullWidth onClick={()=>{setOpen(true)}} >Fetch from Linkedin</Button>
@@ -132,7 +142,7 @@ const Matchedprofiles = () => {
 
     </Paper>
 
-{ relevantProfiles &&   <Paper elevation={3} sx={{mt:3}}>
+{ (relevantProfiles || ans?.w) &&   <Paper elevation={3} sx={{mt:3}}>
         <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -252,6 +262,25 @@ const Matchedprofiles = () => {
                     Coming Soon...
                   </Alert>
                 </Snackbar>
+
+                <Dialog
+        open={Dialogopen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent id="alert-dialog-title" sx={{textTransform:"capitalize"}}>
+          {"Upload resumes and get profiles"}
+        </DialogContent>
+        
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Disagree</Button>
+          <Button onClick={()=>{setDialogOpen(false),navigate.push('profiles/upload')} } >
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   )
 }

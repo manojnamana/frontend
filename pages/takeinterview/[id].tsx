@@ -1,5 +1,6 @@
 import { AccountCircleOutlined, MarkunreadOutlined, Phone, PhoneOutlined } from '@mui/icons-material';
 import { Button, Paper, Stack, Typography } from '@mui/material'
+import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 
 const questions = [
@@ -20,6 +21,9 @@ const questions = [
 const Screen6 = () => {
        
   const [isUploaded,setIsUploaded] = useState(false)
+      const navigate = useRouter()
+    
+      const ans = navigate?.query
     
 
   return (
@@ -43,8 +47,8 @@ const Screen6 = () => {
               </Paper>
 
 <Stack direction={"row"} gap={4} mt={4}>
-    <Button variant='contained'onClick={()=>{setIsUploaded(true)}} >Upload Transcript</Button>
-    {isUploaded &&<Button variant='contained'  >Generate Assessment Report</Button>}
+    <Button variant='contained' href='/takeinterview/upload' >Upload Transcript</Button>
+    {(isUploaded || ans?.w) &&<Button variant='contained'  >Generate Assessment Report</Button>}
 </Stack>
             </Stack>
         </Paper>

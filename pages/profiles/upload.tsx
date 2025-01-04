@@ -16,6 +16,8 @@ import {
   Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { West } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 const fileTypes = ["JPEG","JPG", "PNG", "PDF"]
 
@@ -23,7 +25,8 @@ export default function App() {
   const [files, setFiles] = useState([]);
     const [open, setOpen] = React.useState(false);
   
-  
+  const navigate = useRouter()
+
   
     const handleClose = (
       event?: React.SyntheticEvent | Event,
@@ -48,6 +51,11 @@ export default function App() {
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
+      <Stack display={"felx"} flexDirection={"row"} mb={2}>
+                          <Button href='/takeinterview'  sx={{border:1}} >
+                            <West/>
+                          </Button>
+                        </Stack>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2} >
         Upload
       </Typography>
@@ -101,8 +109,12 @@ export default function App() {
           </Typography>
         )}
 
+
       </Box>
 
+      <Stack>
+  <Button variant="contained" href="/profiles/?w=true">Upload</Button>
+</Stack>
       </Paper>
             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
               <Alert

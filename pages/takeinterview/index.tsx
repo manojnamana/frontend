@@ -73,6 +73,7 @@ const TakeInterView = () => {
   
     const navigate = useRouter()
   
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
