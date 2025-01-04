@@ -34,6 +34,11 @@ import {
   Users,
   GraduationCap,
   Loader,
+  Handshake,
+  File,
+  User,
+  Users2,
+  BriefcaseBusiness,
 } from 'lucide-react';
 import { AccountCircle, Logout, People, Work } from '@mui/icons-material';
 import Admin from '@/pages/home';
@@ -116,20 +121,44 @@ const CollapsibleLibrary = () => {
   const [activeComponent, setActiveComponent] = useState(`${route.pathname}`); 
 
   const drawerWidth = isSidebarOpen ? 241 : 241;
-  console.log(route.pathname)
+  const getactive = (route.pathname)
+  console.log(getactive)
 
-  const renderActiveComponent = () => {
-    switch (activeComponent) {
-      case '/jobs':
-        return <Jobs />;
-      case '/home':
-        return <Admin />;
-        case '/profile':
-        return <Profile />;
-      default:
-        return null;
+  useEffect (()=>{
+    const renderActiveComponent = () => {
+      if (getactive === '/jobs/create'){
+        setActiveComponent('/jobs')
+        console.log(true)
+      }
+      else if (getactive === '/jobs/[id]'){
+        setActiveComponent('/jobs')
+        console.log(true)
+      }
+      else if (getactive === '/profiles'){
+        setActiveComponent('/profiles')
+        console.log(true)
+      }
+      else if (getactive === '/profiles/upload'){
+        setActiveComponent('/profiles')
+        console.log(true)
+      }
+      else if (getactive === '/viewassessmentreport/[id]'){
+        setActiveComponent('/viewassessmentreport')
+        console.log(true)
+      }
+      else if (getactive === '/takeinterview/[id]'){
+        setActiveComponent('/takeinterview')
+        console.log(true)
+      }
+      else if (getactive === '/takeinterview/upload'){
+        setActiveComponent('/takeinterview')
+        console.log(true)
+      }
     }
-  };
+
+    renderActiveComponent()
+  },[getactive])
+
 
 
 
@@ -168,7 +197,7 @@ const CollapsibleLibrary = () => {
         onClick={() => {setActiveComponent('/home'),route.push('/home')}}
       />
       <NavMenuItem
-        icon={Work}
+        icon={BriefcaseBusiness}
         label={isSmallScreen ? 'Jobs Listing' : ''}
         isActive={activeComponent === '/jobs'}
         onClick={() => {setActiveComponent('/jobs'),route.push('/jobs')}
@@ -176,7 +205,7 @@ const CollapsibleLibrary = () => {
         }
       />
       <NavMenuItem
-        icon={People}
+        icon={Users2}
         label={isSmallScreen ? 'Match Profiles' : ''}
         isActive={activeComponent === '/profiles'}
         onClick={() => {setActiveComponent('/profiles'),route.push('/profiles')}
@@ -184,10 +213,18 @@ const CollapsibleLibrary = () => {
         }
       />
        <NavMenuItem
-        icon={People}
+        icon={Handshake}
         label={isSmallScreen ? 'Take Interview' : ''}
         isActive={activeComponent === '/takeinterview'}
         onClick={() => {setActiveComponent('/takeinterview'),route.push('/takeinterview')}
+
+        }
+      />
+             <NavMenuItem
+        icon={File}
+        label={isSmallScreen ? 'View Assessment Report' : ''}
+        isActive={activeComponent === '/viewassessmentreport'}
+        onClick={() => {setActiveComponent('/viewassessmentreport'),route.push('/viewassessmentreport')}
 
         }
       />

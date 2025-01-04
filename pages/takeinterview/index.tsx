@@ -1,6 +1,5 @@
-import IconifyIcon from '@/src/components/icon'
-import { ArrowRightAlt } from '@mui/icons-material'
-import { Alert, Button, Checkbox, Chip, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+// @ts-nocheck
+import {  Chip, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -10,7 +9,7 @@ import ProfileRows from '@/utils/Demo/profiles';
 
 
 interface Column {
-  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken' ;
+  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken' |'interviewDateAndTime'|'takeInterview';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -22,8 +21,8 @@ const columns: readonly Column[] = [
   { id: 'email', label: 'Email', minWidth: 200,},
   { id: 'viewResume', label: 'View Resume', minWidth: 200,},
   { id: 'match', label: '% Match', minWidth: 200 ,},
-  { id: 'status', label: 'Status', minWidth: 200,},
-  { id: 'actionTaken', label: 'Action Taken', minWidth: 200,},
+  { id: 'interviewDateAndTime', label: 'Interview Date and Time', minWidth: 200 ,},
+  { id: 'takeInterview', label: 'Take Interview', minWidth: 200 ,},
   
 
  
@@ -65,26 +64,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Matchedprofiles = () => {
+const TakeInterView = () => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [filteredRows, setFilteredRows] = React.useState(ProfileRows);
     const [relevantProfiles,setRelevantProfiles] = React.useState(false);
-        const [open, setOpen] = React.useState(false);
-
-    
-        const handleClose = (
-            event?: React.SyntheticEvent | Event,
-            reason?: SnackbarCloseReason,
-          ) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-        
-            setOpen(false);
-
-          };
   
     const navigate = useRouter()
   
@@ -113,26 +98,9 @@ const Matchedprofiles = () => {
     };
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
-    <Paper elevation={3} sx={{display:"flex",flexDirection:"column",p:2,gap:2}}>
-        <Stack display={"flex"} flexDirection={"row"} gap={4} >
-        <Typography fontSize={18}>TechCorp</Typography>
-        <Typography fontSize={18}>Software Engineer</Typography>
-        </Stack>
-        <Stack display={"flex"} flexDirection={"row"}  gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
-        <Button variant="outlined" fullWidth href='profiles/upload' startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
-                Upload
-              </Button>
-            <Button variant='outlined' fullWidth onClick={()=>{setOpen(true)}} >Fetch from Linkedin</Button>
-            <Button variant='outlined' fullWidth  sx={{height:38}}> <Checkbox />
-              Include resumes</Button>
-<Button variant='contained' fullWidth onClick={()=>{setRelevantProfiles(true)}} >Find Relevant Resumes</Button>
-        </Stack>
 
-        
 
-    </Paper>
-
-{ relevantProfiles &&   <Paper elevation={3} sx={{mt:3}}>
+ <Paper elevation={3} sx={{mt:3}}>
         <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -180,15 +148,14 @@ const Matchedprofiles = () => {
                     .map((row, index) => (
                     <TableRow hover  tabIndex={-1} key={index}>
                         {columns.map((column) => {
-                        const value = row[column.id];
+                        const value = row[column.id] ;
                         const getId = row.resumeId
-                        const sechuduleInterview =( row.actionTaken === "Schedule Interview") || ( row.actionTaken === "Reschedule Interview")
                         const truncatedText = value?.split(' ').slice(0, 20).join(' ');
                         const isTruncated = value?.split(' ').length > 20;
                     
                         return (
                             <>
-                            {column.id === "viewResume" ?(
+                            {((column.id === "viewResume")||(column.id === 'takeInterview') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
@@ -198,7 +165,12 @@ const Matchedprofiles = () => {
                                     {isTruncated && '...'}
                                 </Typography> */}
                                 
-                                <Chip sx={{gap:2}}  label={'View Resume'}/>
+                                
+                                {
+                                  (column.id === 'takeInterview') ?(
+                                    <Link href={`takeinterview/${getId}`} underline='hover'>Take Interview</Link>
+                                  ):(<Chip sx={{gap:2}}  label={'View Resume'}/>)
+                                }
                                 
                                 </Tooltip>
                                 </Stack>
@@ -206,15 +178,7 @@ const Matchedprofiles = () => {
                             </Stack>
                             
                             </TableCell>):
-
-                            (column.id === "actionTaken")&&(sechuduleInterview)  ?
-
                             ( <TableCell key={column.id} align={column.align}>
-                            <Link href='/takeinterview' underline='hover'>
-                            {value} 
-                            </Link>
-                            
-                            </TableCell>):( <TableCell key={column.id} align={column.align}>
                             {value} 
                             
                             </TableCell>)}
@@ -241,19 +205,9 @@ const Matchedprofiles = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            </Paper>}
-             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
-                  <Alert
-                    onClose={handleClose}
-                    severity="info"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                  >
-                    Coming Soon...
-                  </Alert>
-                </Snackbar>
+            </Paper>
     </Stack>
   )
 }
 
-export default Matchedprofiles
+export default TakeInterView

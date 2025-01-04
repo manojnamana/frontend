@@ -16,8 +16,9 @@ import {
   Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { West } from "@mui/icons-material";
 
-const fileTypes = ["JPEG","JPG", "PNG", "PDF"]
+const fileTypes = ['DOCX']
 
 export default function App() {
   const [files, setFiles] = useState([]);
@@ -48,8 +49,13 @@ export default function App() {
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
+      <Stack display={"felx"} flexDirection={"row"} mb={2}>
+                    <Button href='/takeinterview'  sx={{border:1}} >
+                      <West/>
+                    </Button>
+                  </Stack>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2} >
-        Upload
+        Upload Transcript
       </Typography>
       <Paper elevation={3} sx={{p:3,display:"flex", flexDirection:"column",gap:2}}>
         <Stack display={"flex"} justifyContent={"center"} flexDirection={"row"} width={"100%"}>
@@ -84,7 +90,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     sx={{ mr: 2 }}
                   >
-                    View PDF
+                    View DOCX
                   </Button>
                 )}
                 <ListItemSecondaryAction>
@@ -101,8 +107,13 @@ export default function App() {
           </Typography>
         )}
 
+        <Stack>
+          <Button variant="contained" sx={{mt:2}}>Upload</Button>
+        </Stack>
       </Box>
 
+      
+     
       </Paper>
             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
               <Alert

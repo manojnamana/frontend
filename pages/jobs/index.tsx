@@ -204,7 +204,7 @@ export default function Jobs() {
                               </Typography>
                             </Tooltip>
                             </Stack>
-                          <Button variant='outlined' sx={{gap:2}}  >Find Profile{<ArrowRightAlt/>}</Button>
+                          <Button variant='outlined' href='/profiles' sx={{gap:2}}  >Find Profile{<ArrowRightAlt/>}</Button>
                           </Stack>
                           
                         </TableCell>):

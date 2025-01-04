@@ -27,6 +27,7 @@ const validationSchema2 = Yup.object().shape({
 
 const GetDescription = ({companyName}:any) => {
     const [open, setOpen] = React.useState(false);
+    const [openLinkedin,setOpenLinkedin] = React.useState(false);
 
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -37,6 +38,7 @@ const GetDescription = ({companyName}:any) => {
         }
     
         setOpen(false);
+        setOpenLinkedin(false)
       };
 
         const {
@@ -113,7 +115,7 @@ const GetDescription = ({companyName}:any) => {
         </Button> 
         </Grid>
         <Grid item xs={12} md={6}>
-        <Button sx={{gap:2}}  fullWidth onClick={handleSubmit(onSave)} variant="contained" color="primary">
+        <Button sx={{gap:2}}  fullWidth onClick={()=>{setOpenLinkedin(true)}} variant="contained" color="primary">
        <Linkedin/>   Post On Linkedin
         </Button> 
         </Grid>
@@ -129,6 +131,16 @@ const GetDescription = ({companyName}:any) => {
         sx={{ width: '100%' }}
       >
         Job Details Uploaded
+      </Alert>
+    </Snackbar>
+    <Snackbar open={openLinkedin}  autoHideDuration={6000} onClose={handleClose}>
+      <Alert
+        onClose={handleClose}
+        severity="info"
+        variant="filled"
+        sx={{ width: '100%' }}
+      >
+        Coming Soon...
       </Alert>
     </Snackbar>
   </Stack>

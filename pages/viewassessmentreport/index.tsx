@@ -1,6 +1,6 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -10,7 +10,7 @@ import ProfileRows from '@/utils/Demo/profiles';
 
 
 interface Column {
-  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken' |'interviewDateAndTime';
+  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken'|'assessmentReport' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -21,8 +21,7 @@ const columns: readonly Column[] = [
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
   { id: 'viewResume', label: 'View Resume', minWidth: 200,},
-  { id: 'match', label: '% Match', minWidth: 200 ,},
-  { id: 'interviewDateAndTime', label: 'Interview Date and Time', minWidth: 200 ,},
+  { id: 'assessmentReport', label: 'Assessment Report', minWidth: 200,},
   
 
  
@@ -64,7 +63,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const TakeInterView = () => {
+const Screen7 = () => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(20);
     const [searchQuery, setSearchQuery] = React.useState('');
@@ -99,8 +98,7 @@ const TakeInterView = () => {
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
 
-
- <Paper elevation={3} sx={{mt:3}}>
+        <Paper elevation={3} sx={{mt:3}}>
         <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -155,7 +153,7 @@ const TakeInterView = () => {
                     
                         return (
                             <>
-                            {column.id === "viewResume" ?(
+                            {((column.id === "viewResume") ||(column.id === 'assessmentReport') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
@@ -165,7 +163,12 @@ const TakeInterView = () => {
                                     {isTruncated && '...'}
                                 </Typography> */}
                                 
+                                
+                                {column.id === "viewResume"?
                                 <Chip sx={{gap:2}}  label={'View Resume'}/>
+                                :
+                                <Link href={`viewassessmentreport/${getId}`} sx={{gap:2}} underline='hover'  >{'View Report'}</Link>
+                                }
                                 
                                 </Tooltip>
                                 </Stack>
@@ -205,4 +208,4 @@ const TakeInterView = () => {
   )
 }
 
-export default TakeInterView
+export default Screen7

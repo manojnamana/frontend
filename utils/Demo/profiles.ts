@@ -9,7 +9,8 @@ export interface Data {
     match:string;
     status:string;
     actionTaken:string;
-    interviewDateAndTime:string
+    interviewDateAndTime:string;
+    assessmentReport:string;
   }
   
   function createData(
@@ -22,9 +23,9 @@ export interface Data {
     viewResume:string,
     match:string,
     status:string,
-    actionTaken:string,interviewDateAndTime:string
+    actionTaken:string,interviewDateAndTime:string,assessmentReport:string
   ): Data {
-    return { resumeId, name, role, email, resume_text, mobile,viewResume,match,status,actionTaken,interviewDateAndTime};
+    return { resumeId, name, role, email, resume_text, mobile,viewResume,match,status,actionTaken,interviewDateAndTime,assessmentReport};
   }
   
   const ProfileRows = [
@@ -38,8 +39,9 @@ export interface Data {
       '/view/john-doe-resume',
       '80%',
       'In process',
-      'Select',
-      '2025-01-01 9:30 AM'
+      'Reschedule Interview',
+      '2025-01-01 9:30 AM',
+      '/view/john-doe-report'
     ),
     createData(
       '2',
@@ -52,7 +54,8 @@ export interface Data {
       '90%',
       'Rejected',
       'Reject',
-      '2025-01-01 9:30 AM'
+      '2025-01-01 9:30 AM',
+      '/view/john-doe-report'
     ),
     createData(
       '3',
@@ -65,7 +68,8 @@ export interface Data {
       '85%',
       'Rejected',
       'Reject',
-      '2025-01-01 9:30 AM'
+      '2025-01-01 9:30 AM',
+      '/view/john-doe-report'
     ),
     createData(
       '4',
@@ -78,7 +82,8 @@ export interface Data {
       '70%',
       'In process',
       'Schedule Interview',
-      '2025-01-01 9:30 AM'
+      '2025-01-01 9:30 AM',
+      '/view/john-doe-report'
     ),
     createData(
       '5',
@@ -91,7 +96,8 @@ export interface Data {
       '95%',
       'Selected',
       'Select',
-      '2025-01-01 9:30 AM'
+      '2025-01-01 9:30 AM',
+      '/view/john-doe-report'
     ),
   ];
   
