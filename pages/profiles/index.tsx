@@ -143,7 +143,7 @@ const Matchedprofiles = () => {
     </Paper>
 
 { (relevantProfiles || ans?.w) &&   <Paper elevation={3} sx={{mt:3}}>
-        <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+        {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
                     <SearchIcon  />
@@ -155,7 +155,7 @@ const Matchedprofiles = () => {
                     onChange={handleSearch}
                     />
                 </Search>
-                </Stack>
+                </Stack> */}
 
             <Paper
             elevation={3}
@@ -165,7 +165,7 @@ const Matchedprofiles = () => {
                 '&::-webkit-scrollbar': { display: 'none' },
                 borderRadius:1,
                 bgcolor:"white",
-                mx:2
+                mx:2,mt:6
             }}
             >
             <Table stickyHeader aria-label="responsive table" >

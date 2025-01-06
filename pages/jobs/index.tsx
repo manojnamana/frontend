@@ -29,7 +29,7 @@ const columns: readonly Column[] = [
   { id: 'company', label: 'Company', minWidth: 200 ,},
   { id: 'role', label: 'Role', minWidth: 200,},
   { id: 'skills', label: 'Skills', minWidth: 200,},
-  { id: 'created_on', label: 'Created On', minWidth: 200 ,},
+  { id: 'created_on', label: 'Last updated on', minWidth: 200 ,},
   { id: 'status', label: 'Status', minWidth: 200,},
 
  
@@ -140,7 +140,7 @@ export default function Jobs() {
             </Link>
           </Stack>
         </Stack>
-         <Stack component="form"  direction={'row'} justifyContent={'flex-end'} mb={2}>
+         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} mb={2}>
               <Search>
                 <SearchIconWrapper>
                   <SearchIcon sx={{ color: "black" }} />
@@ -152,7 +152,7 @@ export default function Jobs() {
                   onChange={handleSearch}
                 />
               </Search>
-            </Stack>
+            </Stack> */}
 
         <Paper
         elevation={3}
@@ -161,7 +161,8 @@ export default function Jobs() {
             overflowX: 'auto',
             '&::-webkit-scrollbar': { display: 'none' },
             borderRadius:1,
-            bgcolor:"white"
+            bgcolor:"white",
+            
           }}
         >
           <Table stickyHeader aria-label="responsive table" >

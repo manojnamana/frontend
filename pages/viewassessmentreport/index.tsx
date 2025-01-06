@@ -99,7 +99,7 @@ const Screen7 = () => {
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
 
         <Paper elevation={3} sx={{mt:3}}>
-        <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+        {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
                     <SearchIcon  />
@@ -111,7 +111,7 @@ const Screen7 = () => {
                     onChange={handleSearch}
                     />
                 </Search>
-                </Stack>
+                </Stack> */}
 
             <Paper
             elevation={3}
@@ -121,7 +121,7 @@ const Screen7 = () => {
                 '&::-webkit-scrollbar': { display: 'none' },
                 borderRadius:1,
                 bgcolor:"white",
-                mx:2
+                mx:2,mt:6
             }}
             >
             <Table stickyHeader aria-label="responsive table" >

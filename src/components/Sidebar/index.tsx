@@ -235,10 +235,10 @@ const CollapsibleLibrary = () => {
   <Box>
     <Divider />
     <List sx={{ px: 2 }}>
-      <NavMenuItem
+      {/* <NavMenuItem
         icon={AccountCircle}
         label={isSmallScreen ? 'Profile' : ''}
-      />
+      /> */}
       <NavMenuItem
         icon={Logout}
         label={isSmallScreen ? 'Logout' : ''}
