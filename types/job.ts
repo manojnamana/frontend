@@ -8,5 +8,5 @@ export interface Job{
   evaluation_criteria: string;
   created_at: string;
   updated_at :string;
-  active_status: string;
+  job_status: string;
 }

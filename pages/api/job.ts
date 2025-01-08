@@ -23,7 +23,7 @@ export const createJob = async (data: CreateJobData) => {
 };
 
 interface UpdateJobData {
-  company_name: string;
+  job_company_name: string;
   role: string;
   skills: string;
   location: string;

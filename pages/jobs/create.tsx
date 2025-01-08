@@ -73,7 +73,7 @@ const CreateJobDetails = () => {
   
     try {
     const jobData =   await createJob({
-        company_name: companyName,
+        job_company_name: companyName,
         role :roleTitle,
         skills,
         location,
@@ -82,10 +82,11 @@ const CreateJobDetails = () => {
         linkedin_saved:false
       });
 
+      setDis(true);
+
       setJobDetails(jobData);
       console.log(jobData)
       setCompanyName =(companyName)
-      setDis(true);
     } catch (error) {
       console.error((error as Error).message);
       

@@ -63,7 +63,7 @@ const GetDescription = ({jobDetails}:any) => {
   
       try {
       await updateJob({
-          company_name:jobDetails.job.company_name,
+          job_company_name:jobDetails.job.company_name,
           role:jobDetails.job.role,
           skills:jobDetails.job.skills,
           location:jobDetails.job.location,

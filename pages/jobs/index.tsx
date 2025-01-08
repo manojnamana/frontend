@@ -16,7 +16,7 @@ import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
 
 interface Column {
-  id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'active_status';
+  id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -27,7 +27,7 @@ const columns: readonly Column[] = [
   { id: 'role', label: 'Role', minWidth: 200 },
   { id: 'skills', label: 'Skills', minWidth: 200 },
   { id: 'created_at', label: 'Last updated on', minWidth: 200 },
-  { id: 'active_status', label: 'Status', minWidth: 200 },
+  { id: 'job_status', label: 'Status', minWidth: 200 },
 ];
 
 export default function Jobs() {
@@ -41,11 +41,11 @@ export default function Jobs() {
     const fetchJobs = async () => {
       try {
         const response = await GetJobsList();
-        const jobs: Job[] = response.results.map((job: any) => ({
-          company_name: job.company_details.company_name,
+        const jobs: Job[] = response.map((job: any) => ({
+          company_name: job.job_company_name,
           role: job.role,
-          skills: job.skills.join(', '),
-          created_on: new Date(job.updated_at).toLocaleDateString(),
+          skills: job.skills,
+          created_at: new Date(job.updated_at).toLocaleDateString(),
           job_status: job.job_status,
         }));
         setRows(jobs);
