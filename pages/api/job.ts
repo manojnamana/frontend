@@ -37,7 +37,7 @@ interface UpdateJobData {
 }
 
 export const updateJob = async (data:UpdateJobData)=>{
-  const res =  await ApiClient.put(`/api/jobs/update/${data.encrypted_id}`, data);
+  const res =  await ApiClient.put(`/api/jobs/update/${data.encrypted_id}/`, data);
   return res.data
 
 }
@@ -48,7 +48,7 @@ export const GetJobsList = async () => {
 };
 
 export const GetJobsListById = async (id:string) => {
-  const res =  await ApiClient.get(`/api/jobs/${id}`);
+  const res =  await ApiClient.get(`/api/jobs/${id}/`);
   return res.data
 };
 

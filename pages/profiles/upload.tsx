@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { CreateResume } from "../api/profile";
 
 
-const fileTypes = ["JPEG","JPG", "PNG", "PDF"]
+const fileTypes = ["JPEG","JPG", "PNG", "PDF","DOCX"]
 
 export default function App() {
     const [files, setFiles] = useState([]);

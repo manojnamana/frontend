@@ -43,7 +43,7 @@ interface FormData {
   }
 const CreateJobDetails = () => {
 
-    const [companyName,setCompanyName] = useState("")
+    const [companyNameDetail,setCompanyName] = useState("")
     const [dis,setDis] = useState(false)
     const [jobDetails,setJobDetails] = useState('')
     const [loading,setLoading] = useState(false)
@@ -62,7 +62,7 @@ const CreateJobDetails = () => {
   const onSubmit = async (data: FormData) => {
     const {
       companyName,
-      role,
+      roleTitle,
       skills,
       location,
       projectExperience,
@@ -74,7 +74,7 @@ const CreateJobDetails = () => {
     try {
     const jobData =   await createJob({
         company_name: companyName,
-        role,
+        role :roleTitle,
         skills,
         location,
         project_experience:projectExperience,
@@ -83,10 +83,12 @@ const CreateJobDetails = () => {
       });
 
       setJobDetails(jobData);
-      setCompanyName =(data.companyName)
+      console.log(jobData)
+      setCompanyName =(companyName)
       setDis(true);
     } catch (error) {
       console.error((error as Error).message);
+      setDis(true);
       
     } finally {
       setLoading(false);
@@ -96,7 +98,7 @@ const CreateJobDetails = () => {
 
 
 if (dis){
-  return  <GetDescription company_name = {companyName} jobDetails ={jobDetails}/>
+  return  <GetDescription  jobDetails ={jobDetails}/>
 }
 else{
   return (

@@ -14,6 +14,7 @@ import { styled } from '@mui/material/styles';
 import { ArrowRightAlt } from '@mui/icons-material';
 import { useRouter } from 'next/router';
 import { GetJobsList } from '../api/job';
+import { Job } from '@/types/job';
 
 interface Column {
   id: 'company' | 'role' | 'skills' | 'created_on' | 'status';
@@ -36,13 +37,15 @@ export default function Jobs() {
   const [rows, setRows] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filteredRows, setFilteredRows] = React.useState([]);
-
+  const [jobs,setJobs] = React.useState<Job>()
   const router = useRouter();
 
-  React.useEffect(() => {
-    const fetchJobs = async () => {
+  React.useEffect(async() => {
+    
       try {
         const response = await GetJobsList();
+        setJobs(response)
+        console.log(response)
         const sortedJobs = response.data.results.sort(
           (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
         );
@@ -51,9 +54,9 @@ export default function Jobs() {
       } catch (error) {
         console.error((error as Error).message);
       }
-    };
+    
 
-    fetchJobs();
+    
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -22,7 +22,7 @@ const validationSchema2 = Yup.object().shape({
 
 
 
-const GetDescription = ({jobDetails}:any,{company_name}:any) => {
+const GetDescription = ({jobDetails}:any) => {
     const [open, setOpen] = React.useState(false);
     const [openLinkedin,setOpenLinkedin] = React.useState(false);
         const [loading,setLoading] = React.useState(false)
@@ -75,6 +75,7 @@ const GetDescription = ({jobDetails}:any,{company_name}:any) => {
         });
         setOpen(true)
         setMessage('Job Created')
+        
       }catch (error) {
         setMessage((error as Error).message);
         
@@ -99,7 +100,7 @@ const GetDescription = ({jobDetails}:any,{company_name}:any) => {
       fontWeight="bold"
       mb={2}
     >
-      {company_name}
+      {jobDetails.job.company_name}
     </Typography>
     <Paper elevation={3} sx={{p:3}}>
     <form >
