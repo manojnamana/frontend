@@ -47,7 +47,7 @@ export const GetJobsList = async () => {
   return res.data
 };
 
-export const GetJobsListById = async (id:string) => {
+export const GetJobsListById = async (id:string|null) => {
   const res =  await ApiClient.get(`/api/jobs/${id}/`);
   return res.data
 };

@@ -1,16 +1,18 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import { styled } from '@mui/material/styles';
 
 import { useRouter } from 'next/router';
 import ProfileRows from '@/utils/Demo/profiles';
+import { Profile } from '@/types/profile';
+import { GetRelavanentProfile } from '../api/profile';
 
 
 interface Column {
-  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken' ;
+  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'status'|'actionTaken' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -20,8 +22,8 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'viewResume', label: 'View Resume', minWidth: 200,},
-  { id: 'match', label: '% Match', minWidth: 200 ,},
+  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
+  { id: 'percentage_matching', label: '% Match', minWidth: 200 ,},
   { id: 'status', label: 'Status', minWidth: 200,},
   { id: 'actionTaken', label: 'Action Taken', minWidth: 200,},
   
@@ -69,12 +71,42 @@ const Matchedprofiles = () => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredRows, setFilteredRows] = useState(ProfileRows);
+    const [rows, setRows] = useState<Profile[]>([]);
+    const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [relevantProfiles,setRelevantProfiles] = useState(false);
-        const [Dialogopen, setDialogOpen] = useState(false);
-        const [open, setOpen] = useState(false);
+    const [Dialogopen, setDialogOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [loading,setLoading] = useState(false)
 
     
+  const FindRelevant = async()=>{
+    setLoading(true)
+    try{
+      
+      const response = await GetRelavanentProfile();
+      const profilesData : Profile[] = response.map((prof:any)=>({
+        name :prof.name,
+        mobile :prof.mobile,
+        email:prof.email,
+        resume_text:prof.resume_text,
+        percentage_matching:prof.percentage_matching,
+        status:prof.status,
+        actionTaken:"Schedule Interview"
+        
+      }))
+        setRows(profilesData)
+        setRelevantProfiles(true)
+        setLoading(false)
+    }catch(error){
+
+      console.error('Error fetching Profiles:', error);
+    }finally{
+      setLoading(false)
+    }
+
+  }
+
+
         const handleClose = (
             event?: React.SyntheticEvent | Event,
             reason?: SnackbarCloseReason,
@@ -95,20 +127,17 @@ const Matchedprofiles = () => {
     const ans = navigate?.query
     
   
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const query = event.target.value.toLowerCase();
-      setSearchQuery(query);
-      setFilteredRows(
-          ProfileRows.filter(
-          (row) =>
-            row.resumeId.toLowerCase().includes(query) ||
-            row.name.toLowerCase().includes(query) ||
-            row.mobile.toLowerCase().includes(query) ||
-            row.email.toLowerCase().includes(query) 
-  
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    setFilteredRows(
+      rows.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(query)
         )
-      );
-    };
+      )
+    );
+  };
   
     const handleChangePage = (event: unknown, newPage: number) => {
       setPage(newPage);
@@ -132,14 +161,19 @@ const Matchedprofiles = () => {
             <Button variant='outlined' fullWidth onClick={()=>{setOpen(true)}} >Fetch from Linkedin</Button>
             <Button variant='outlined' fullWidth  sx={{height:38}}> <Checkbox />
               Include resumes</Button>
-<Button variant='contained' fullWidth onClick={()=>{setRelevantProfiles(true)}} >Find Relevant Resumes</Button>
+<Button variant='contained' fullWidth onClick={FindRelevant} >Find Relevant Resumes</Button>
         </Stack>
 
         
 
     </Paper>
+{loading && (
+  <Stack> 
+    <Skeleton variant="rectangular" width={210} height={200} />
+  </Stack>
 
-{ (relevantProfiles || ans?.w) &&   <Paper elevation={3} sx={{mt:3}}>
+)}
+{ (relevantProfiles || ans?.w ) &&   <Paper elevation={3} sx={{mt:3}}>
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -182,20 +216,21 @@ const Matchedprofiles = () => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {filteredRows
+                {filteredRows.length > 0 
+                &&(
+                    filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => (
-                    <TableRow hover  tabIndex={-1} key={index}>
+                    <TableRow hover key={index}>
                         {columns.map((column) => {
                         const value = row[column.id];
-                        const getId = row.resumeId
-                        const sechuduleInterview =( row.actionTaken === "Schedule Interview") || ( row.actionTaken === "Reschedule Interview")
+                        const sechuduleInterview =( row.actionTaken === "Schedule Interview" ) 
                         const truncatedText = value?.split(' ').slice(0, 20).join(' ');
                         const isTruncated = value?.split(' ').length > 20;
                     
                         return (
                             <>
-                            {column.id === "viewResume" ?(
+                            {column.id === "resume_text" ?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
@@ -235,7 +270,13 @@ const Matchedprofiles = () => {
                         
                     
                     </TableRow>
-                    ))}
+                    )))}
+                    {filteredRows.length <=0 && 
+                    (<TableRow>
+                                      <TableCell colSpan={columns.length} align="center">
+                                        No jobs found.
+                                      </TableCell>
+                                    </TableRow>)}
                 </TableBody>
             </Table>
             </Paper>

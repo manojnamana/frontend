@@ -9,4 +9,5 @@ export interface Job{
   created_at: string;
   updated_at :string;
   job_status: string;
+  encrypted_id:string;
 }

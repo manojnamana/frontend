@@ -11,9 +11,13 @@ import {
   TextField,
   Stack,
   Typography,
+  Button,
+  Link,
+  Chip,
 } from '@mui/material';
 import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
+import IconifyIcon from '@/src/components/icon';
 
 interface Column {
   id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
@@ -80,11 +84,18 @@ export default function Jobs() {
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 ,mx:3}}>
+    <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
       <Stack spacing={2} p={2}>
+        <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h5" fontWeight="bold" color="primary">
           Jobs Listing
         </Typography>
+        <Stack>
+              <Button href="/jobs/create" variant="contained" startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
+                Create
+              </Button>
+          </Stack>
+        </Stack>
         {/* <TextField
           variant="outlined"
           placeholder="Search jobs..."
@@ -93,7 +104,7 @@ export default function Jobs() {
           size="small"
           sx={{ width: '100%', maxWidth: 400 }}
         /> */}
-        <TableContainer>
+        <TableContainer sx={{boxShadow:2}}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -110,14 +121,34 @@ export default function Jobs() {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => (
                     <TableRow hover key={index}>
-                      {columns.map((column) => (
-                        <TableCell key={column.id} align={column.align}>
-                          {row[column.id]}
-                        </TableCell>
-                      ))}
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        const getId = row.encrypted_id
+                        return(
+                          <>
+                          {column.id === "job_company_name" && (
+                            <TableCell key={column.id} align={column.align}>
+                              <Link href={`jobs/${getId}`} underline='hover'>
+                              {value}
+                              </Link>
+                          </TableCell>
+                          )}
+                          {column.id === "job_status" && (
+                            <TableCell key={column.id} align={column.align}>
+                              <Chip sx={{gap:2}}  label={`${value}`}/>
+                              
+                          </TableCell>
+                          )}
+                        {((column.id !== "job_status")&&(column.id !== "job_company_name" )) &&(<TableCell key={column.id} align={column.align}>
+                          {value}
+                        </TableCell>)}
+                        </>
+                        )
+})}
                     </TableRow>
                   ))
-              ) : (
+              ) : 
+              (
                 <TableRow>
                   <TableCell colSpan={columns.length} align="center">
                     No jobs found.
