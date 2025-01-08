@@ -13,6 +13,9 @@ import {
   InputAdornment,
   Typography,
   Grid,
+  Alert,
+  Snackbar,
+  SnackbarCloseReason,
 } from '@mui/material'
 
 import { useForm, Controller } from 'react-hook-form'
@@ -20,6 +23,9 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next/router'
 import Icon from '@/src/components/icon'
+import { Login } from '@/pages/api/login'
+
+
 
 const schema = yup.object().shape({
   email: yup.string().email().required('Email is required'),
@@ -40,7 +46,24 @@ interface FormData {
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const [loading,setLoading] = useState(false)
+  const [message ,setMessage] = useState('')
   const navigate = useRouter()
+
+  const [open, setOpen] = useState(false);
+
+
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const {
     control,
@@ -52,8 +75,20 @@ const LoginPage = () => {
     resolver: yupResolver(schema),
   })
 
-  const onSubmit = (data: FormData) => {
-    navigate.push('/home')
+  const onSubmit = async(data: FormData) => {
+    const { email, password } = data
+    setLoading(true)
+    try {
+      await Login(email,password);
+      setMessage("Login Success");
+      setOpen(true)
+      setTimeout(() => navigate.push("/home"), 100);
+    } catch (error) {
+      setMessage((error as Error).message);
+      setOpen(true)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -141,7 +176,7 @@ const LoginPage = () => {
               )}
             </FormControl>
 
-            <Box
+            {/* <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'flex-end',
@@ -156,14 +191,24 @@ const LoginPage = () => {
               >
                 Forgot Password?
               </Typography>
-            </Box>
+            </Box> */}
 
-            <Button type="submit" variant="contained" sx={{color:"white",bgcolor:"black"}} fullWidth>
+            <Button type="submit" variant="contained" disabled = {loading} sx={{color:"white",bgcolor:"black"}} fullWidth>
               Login
             </Button>
           </form>
         </Grid>
       </Grid>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+  <Alert
+    onClose={handleClose}
+    severity={message === "Login Success" ? "success" : "error"}
+    variant="filled"
+    sx={{ width: '100%' }}
+  >
+    {message}
+  </Alert>
+</Snackbar>
     </Box>
   )
 }

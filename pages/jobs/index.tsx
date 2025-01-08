@@ -9,78 +9,52 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { Button, Link, Stack, Typography, TextField, Box, InputBase, IconButton, Tooltip } from '@mui/material';
-import IconifyIcon from '../../src/components/icon';
-import rows from '../../utils/Demo/demo';
+import { Button, Link, Stack, Typography, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
 import { ArrowRightAlt } from '@mui/icons-material';
 import { useRouter } from 'next/router';
-
+import { GetJobsList } from '../api/job';
 
 interface Column {
-  id: 'company' | 'role' | 'skills' | 'created_on' | 'status' | 'job_description' | 'evaluation_criteria';
+  id: 'company' | 'role' | 'skills' | 'created_on' | 'status';
   label: string;
   minWidth?: number;
   align?: 'right';
 }
 
 const columns: readonly Column[] = [
-  { id: 'company', label: 'Company', minWidth: 200 ,},
-  { id: 'role', label: 'Role', minWidth: 200,},
-  { id: 'skills', label: 'Skills', minWidth: 200,},
-  { id: 'created_on', label: 'Last updated on', minWidth: 200 ,},
-  { id: 'status', label: 'Status', minWidth: 200,},
-
- 
+  { id: 'company', label: 'Company', minWidth: 200 },
+  { id: 'role', label: 'Role', minWidth: 200 },
+  { id: 'skills', label: 'Skills', minWidth: 200 },
+  { id: 'created_on', label: 'Last updated on', minWidth: 200 },
+  { id: 'status', label: 'Status', minWidth: 200 },
 ];
 
-
-
-
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: "whitesmoke",
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'black',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '20ch',
-    // [theme.breakpoints.up('lg')]: {
-    //   width: '20ch',
-    // },
-  },
-}));
 export default function Jobs() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(20);
+  const [rows, setRows] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [filteredRows, setFilteredRows] = React.useState([]);
 
-  const navigate = useRouter()
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await GetJobsList();
+        const sortedJobs = response.data.results.sort(
+          (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
+        setRows(sortedJobs);
+        setFilteredRows(sortedJobs);
+      } catch (error) {
+        console.error((error as Error).message);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
@@ -91,13 +65,8 @@ export default function Jobs() {
           row.company.toLowerCase().includes(query) ||
           row.role.toLowerCase().includes(query) ||
           row.skills.toLowerCase().includes(query) ||
-          row.evaluation_criteria.toLowerCase().includes(query) ||
-          row.job_description.toLowerCase().includes(query) || 
-          row.project_experience.toLowerCase().includes(query) ||
-          row.other_details.toLowerCase().includes(query) ||
           row.created_on.toLowerCase().includes(query) ||
-          row.status.toLowerCase().includes(query) 
-
+          row.status.toLowerCase().includes(query)
       )
     );
   };
@@ -111,74 +80,49 @@ export default function Jobs() {
     setPage(0);
   };
 
-
-
   return (
-    <Paper elevation={0} sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',bgcolor:"white" }}>
-
-      <Stack 
+    <Paper elevation={0} sx={{ m: { xs: 1, sm: 2, md: 3, p: 2 }, width: '100%', bgcolor: 'white' }}>
+      <Stack
         sx={{
           width: '100%',
           overflowX: 'auto',
           boxShadow: { xs: 1, sm: 2, md: 3 },
           '&::-webkit-scrollbar': { display: 'none' },
-          px:2,
-          bgcolor:'white'
-         
-          
+          px: 2,
+          bgcolor: 'white',
         }}
       >
         <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} alignItems={'center'} p={2}>
-          <Typography fontSize={25} fontWeight={'bold'} color='primary'>
+          <Typography fontSize={25} fontWeight={'bold'} color="primary">
             Jobs Listing
           </Typography>
-          <Stack >
+          <Stack>
             <Link href="/jobs/create">
-              <Button variant="contained" startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
+              <Button variant="contained" color="primary">
                 Create
               </Button>
             </Link>
           </Stack>
         </Stack>
-         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} mb={2}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon sx={{ color: "black" }} />
-                </SearchIconWrapper>
-                <StyledInputBase
-                placeholder="Search..."
-                  inputProps={{ 'aria-label': 'search' }}
-                  value={searchQuery}
-                  onChange={handleSearch}
-                />
-              </Search>
-            </Stack> */}
 
         <Paper
-        elevation={3}
+          elevation={3}
           sx={{
             maxWidth: '100%',
             overflowX: 'auto',
             '&::-webkit-scrollbar': { display: 'none' },
-            borderRadius:1,
-            bgcolor:"white",
-            
+            borderRadius: 1,
+            bgcolor: 'white',
           }}
         >
-          <Table stickyHeader aria-label="responsive table" >
-            <TableHead >
-              <TableRow >
+          <Table stickyHeader aria-label="responsive table">
+            <TableHead>
+              <TableRow>
                 {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                  >
+                  <TableCell key={column.id} align={column.align}>
                     {column.label}
-                    
                   </TableCell>
-                  
                 ))}
-                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -188,56 +132,34 @@ export default function Jobs() {
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
                       const value = row[column.id];
-                      const getId = row.jobId
                       const truncatedText = value?.split(' ').slice(0, 20).join(' ');
                       const isTruncated = value?.split(' ').length > 20;
-                  
+
                       return (
-                        <>
-                        {column.id === "status" ?(
-                          <TableCell key={column.id} align={column.align}>
+                        <TableCell key={column.id} align={column.align}>
+                          {column.id === 'company' ? (
+                            <Link href={`/jobs/${row.jobId}`} underline="hover">
+                              {value}
+                            </Link>
+                          ) : column.id === 'status' ? (
                             <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
-                              <Stack maxWidth={400}>
-                            <Tooltip title={isTruncated ? value : ''}  placement="bottom-start"  >
-                              <Typography textOverflow="inherit">
-                                {truncatedText}
-                                {isTruncated && '...'}
-                              </Typography>
-                            </Tooltip>
+                              <Tooltip title={isTruncated ? value : ''} placement="bottom-start">
+                                <Typography textOverflow="inherit">
+                                  {truncatedText}
+                                  {isTruncated && '...'}
+                                </Typography>
+                              </Tooltip>
+                              <Button variant="outlined" href="/profiles" sx={{ gap: 2 }}>
+                                Find Profile
+                                <ArrowRightAlt />
+                              </Button>
                             </Stack>
-                          <Button variant='outlined' href='/profiles' sx={{gap:2}}  >Find Profile{<ArrowRightAlt/>}</Button>
-                          </Stack>
-                          
-                        </TableCell>):
-                        
-                        column.id === "company" ?
-                          (<TableCell key={column.id} align={column.align}>
-                          <Link href={`/jobs/${getId}`} underline='hover'>
-                          {value} 
-                          </Link>
-                          
-                        </TableCell>):
-                        (
-                          <TableCell key={column.id} align={column.align}>
-                          
-                          {value} 
-                         
-                          
+                          ) : (
+                            value
+                          )}
                         </TableCell>
-                        )
-                        
-                        
-                        
-                      }
-                        </>
-                         
                       );
-                      
-                      
                     })}
-                    
-                    
-                   
                   </TableRow>
                 ))}
             </TableBody>

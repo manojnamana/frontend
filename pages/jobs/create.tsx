@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { AutoAwesome, West } from '@mui/icons-material';
 import { Save } from 'lucide-react';
 import GetDescription from '@/src/components/GetDescription';
+import { createJob } from '../api/job';
 
 const validationSchema = Yup.object().shape({
   companyName: Yup.string().required('Company Name is required'),
@@ -31,20 +32,21 @@ interface FormData {
     evaluationCriteria:string
   }
   const defaultValues ={
-    companyName: '',
-    roleTitle: '',
-    skills: '',
-    projectExperience: '',
-    otherDetails: '',
-    jobDescription: '',
-    evaluationCriteria: '',
+    companyName: "",
+    roleTitle: "",
+    skills: "",
+    projectExperience: "",
+    otherDetails: "",
+    jobDescription: "",
+    evaluationCriteria: "",
     location:""
   }
 const CreateJobDetails = () => {
 
-
+    const [companyName,setCompanyName] = useState("")
     const [dis,setDis] = useState(false)
-    const [companyNameFromData,setCompanyNameFromData] = useState('Company Name')
+    const [jobDetails,setJobDetails] = useState('')
+    const [loading,setLoading] = useState(false)
   const {
     handleSubmit,
     control,
@@ -57,18 +59,44 @@ const CreateJobDetails = () => {
   });
 
 
-  const onSubmit = (data :FormData) => {
-    console.log('Form Values:', data);
-    setCompanyNameFromData(data.companyName)
-    setDis(true)
-    
+  const onSubmit = async (data: FormData) => {
+    const {
+      companyName,
+      role,
+      skills,
+      location,
+      projectExperience,
+      otherDetails,
+    } = data;
+  
+    setLoading(true);
+  
+    try {
+    const jobData =   await createJob({
+        company_name: companyName,
+        role,
+        skills,
+        location,
+        project_experience:projectExperience,
+        other_details: otherDetails,
+        linkedin_saved:false
+      });
 
+      setJobDetails(jobData);
+      setCompanyName =(data.companyName)
+      setDis(true);
+    } catch (error) {
+      console.error((error as Error).message);
+      
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
 
 
 if (dis){
-  return  <GetDescription companyName ={companyNameFromData}/>
+  return  <GetDescription company_name = {companyName} jobDetails ={jobDetails}/>
 }
 else{
   return (
@@ -225,7 +253,7 @@ else{
         </Grid>
         <Stack direction="row" justifyContent="center" mt={4}>
         
- <Button sx={{width:'70%',gap:2}}  onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
+ <Button sx={{width:'70%',gap:2}} disabled = {loading}  onClick={handleSubmit(onSubmit)} variant="contained" color="primary">
          <AutoAwesome/>   Generate Job Description
           </Button> 
         </Stack>

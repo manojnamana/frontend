@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Linkedin, Save } from 'lucide-react';
 import React from 'react'
+import { updateJob } from '@/pages/api/job';
 
 
 const validationSchema2 = Yup.object().shape({
@@ -18,17 +19,15 @@ const validationSchema2 = Yup.object().shape({
     jobDescription:string
     evaluationCriteria:string
   }
-  const defaultValues ={
-    jobDescription: '',
-    evaluationCriteria: '',
-
-  }
 
 
-const GetDescription = ({companyName}:any) => {
+
+const GetDescription = ({jobDetails}:any,{company_name}:any) => {
     const [open, setOpen] = React.useState(false);
     const [openLinkedin,setOpenLinkedin] = React.useState(false);
-
+        const [loading,setLoading] = React.useState(false)
+        const [message ,setMessage] = React.useState('')
+    console.log(jobDetails)
     const handleClose = (
         event?: React.SyntheticEvent | Event,
         reason?: SnackbarCloseReason,
@@ -41,6 +40,11 @@ const GetDescription = ({companyName}:any) => {
         setOpenLinkedin(false)
       };
 
+      const defaultValues ={
+        jobDescription: `${jobDetails.job_description}`,
+        evaluationCriteria: `${jobDetails.evaluation_criteria}`,
+    
+      }
         const {
           handleSubmit,
           control,
@@ -51,10 +55,35 @@ const GetDescription = ({companyName}:any) => {
           
           resolver: yupResolver(validationSchema2),
         });
-    const onSave = (data :FormData) => {
-        console.log('Form Values:', data);
+    const onSave = async(data :FormData) => {
+      const {jobDescription, evaluationCriteria} = data
+      setLoading(true);
+  
+      try {
+      await updateJob({
+          company_name:jobDetails.job.company_name,
+          role:jobDetails.job.role,
+          skills:jobDetails.job.skills,
+          location:jobDetails.job.location,
+          project_experience:jobDetails.job.location,
+          job_description: jobDescription,
+          evaluation_criteria: evaluationCriteria,
+          other_details:jobDetails.job.location,
+          linkedin_saved:false,
+          encrypted_id:jobDetails.encrypted_id,
+          
+        });
         setOpen(true)
-      };
+        setMessage('Job Created')
+      }catch (error) {
+        setMessage((error as Error).message);
+        
+        setOpen(true)
+        
+      } finally {
+        setLoading(false);
+      }
+    };
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
       <Stack display={"felx"} flexDirection={"row"}>
@@ -70,7 +99,7 @@ const GetDescription = ({companyName}:any) => {
       fontWeight="bold"
       mb={2}
     >
-      {companyName}
+      {company_name}
     </Typography>
     <Paper elevation={3} sx={{p:3}}>
     <form >
@@ -110,12 +139,12 @@ const GetDescription = ({companyName}:any) => {
             />
         </Grid>
         <Grid item xs={12} md={6}>
-        <Button sx={{gap:2}} fullWidth  onClick={handleSubmit(onSave)} variant="contained" color="primary">
+        <Button sx={{gap:2}} fullWidth disabled={loading}  onClick={handleSubmit(onSave)} variant="contained" color="primary">
        <Save/>   Save  Description
         </Button> 
         </Grid>
         <Grid item xs={12} md={6}>
-        <Button sx={{gap:2}}  fullWidth onClick={()=>{setOpenLinkedin(true)}} variant="contained" color="primary">
+        <Button sx={{gap:2}} disabled={loading}   fullWidth onClick={()=>{setOpenLinkedin(true)}} variant="contained" color="primary">
        <Linkedin/>   Post On Linkedin
         </Button> 
         </Grid>
@@ -126,11 +155,11 @@ const GetDescription = ({companyName}:any) => {
     <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
       <Alert
         onClose={handleClose}
-        severity="success"
+        severity={message === "Job Created" ?"success":"error"}
         variant="filled"
         sx={{ width: '100%' }}
       >
-        Job Details Uploaded
+        {message}
       </Alert>
     </Snackbar>
     <Snackbar open={openLinkedin}  autoHideDuration={6000} onClose={handleClose}>

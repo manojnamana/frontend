@@ -18,14 +18,18 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { West } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { CreateResume } from "../api/profile";
+
 
 const fileTypes = ["JPEG","JPG", "PNG", "PDF"]
 
 export default function App() {
-  const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState([]);
     const [open, setOpen] = React.useState(false);
+    const [loading,setLoading] = useState(false)
+    const [message ,setMessage] = useState('')
   
-  const navigate = useRouter()
+
 
   
     const handleClose = (
@@ -48,6 +52,32 @@ export default function App() {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  const handleUpload = async () => {
+    if (files.length > 0) {
+      setLoading(true);
+      try {
+        const formData = new FormData();
+        files.forEach((file) => {
+          formData.append("resumes", file); // Ensure the key matches your backend's expectations
+        });
+  
+        await CreateResume(formData);
+        setOpen(true);
+        setMessage("Resumes Uploaded");
+      } catch (error) {
+        setOpen(true);
+        setMessage((error as Error).message);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    else if (files.length === 0){
+      setOpen(true);
+        setMessage("Please Upload Resume");
+    }
+  };
+  
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
@@ -113,17 +143,18 @@ export default function App() {
       </Box>
 
       <Stack>
-  <Button variant="contained" href="/profiles/?w=true">Upload</Button>
+        {/* href="/profiles/?w=true" */}
+  <Button variant="contained" onClick={handleUpload} disabled = {loading} >Upload</Button>
 </Stack>
       </Paper>
             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
               <Alert
                 onClose={handleClose}
-                severity="error"
+                severity={message === "Resumes Uploaded"?'success':'error'}
                 variant="filled"
                 sx={{ width: '100%' }}
               >
-                You can upload up to 5 files only.
+                {message}
               </Alert>
             </Snackbar>
     </Stack>
