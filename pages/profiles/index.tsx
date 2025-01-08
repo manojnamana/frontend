@@ -2,7 +2,7 @@ import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
 import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
-import React from 'react'
+import React, { useState } from 'react'
 import { styled } from '@mui/material/styles';
 
 import { useRouter } from 'next/router';
@@ -67,11 +67,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Matchedprofiles = () => {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(20);
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const [filteredRows, setFilteredRows] = React.useState(ProfileRows);
-    const [relevantProfiles,setRelevantProfiles] = React.useState(false);
-        const [Dialogopen, setDialogOpen] = React.useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredRows, setFilteredRows] = useState(ProfileRows);
+    const [relevantProfiles,setRelevantProfiles] = useState(false);
+        const [Dialogopen, setDialogOpen] = useState(false);
+        const [open, setOpen] = useState(false);
 
     
         const handleClose = (
@@ -85,11 +86,7 @@ const Matchedprofiles = () => {
             setOpen(false);
 
           };
-
-            const [open, setOpen] = React.useState(false);
-          
-          
-          const handleDialogClose = ()=>{
+      const handleDialogClose = ()=>{
             setDialogOpen(false)
           }
 

@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Linkedin, Save } from 'lucide-react';
 import React from 'react'
 import { updateJob } from '@/pages/api/job';
+import { useRouter } from 'next/router';
 
 
 const validationSchema2 = Yup.object().shape({
@@ -27,6 +28,7 @@ const GetDescription = ({jobDetails}:any) => {
     const [openLinkedin,setOpenLinkedin] = React.useState(false);
         const [loading,setLoading] = React.useState(false)
         const [message ,setMessage] = React.useState('')
+        const navigation = useRouter()
     console.log(jobDetails)
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -75,7 +77,7 @@ const GetDescription = ({jobDetails}:any) => {
         });
         setOpen(true)
         setMessage('Job Created')
-        
+        setTimeout(() => navigation.push("/jobs"), 100);
       }catch (error) {
         setMessage((error as Error).message);
         

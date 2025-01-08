@@ -1,75 +1,71 @@
-// @ts-nocheck
-
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import { Button, Link, Stack, Typography, Tooltip } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { ArrowRightAlt } from '@mui/icons-material';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from 'react';
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
 
 interface Column {
-  id: 'company' | 'role' | 'skills' | 'created_on' | 'status';
+  id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'active_status';
   label: string;
   minWidth?: number;
   align?: 'right';
 }
 
 const columns: readonly Column[] = [
-  { id: 'company', label: 'Company', minWidth: 200 },
+  { id: 'job_company_name', label: 'Company', minWidth: 200 },
   { id: 'role', label: 'Role', minWidth: 200 },
   { id: 'skills', label: 'Skills', minWidth: 200 },
-  { id: 'created_on', label: 'Last updated on', minWidth: 200 },
-  { id: 'status', label: 'Status', minWidth: 200 },
+  { id: 'created_at', label: 'Last updated on', minWidth: 200 },
+  { id: 'active_status', label: 'Status', minWidth: 200 },
 ];
 
 export default function Jobs() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(20);
-  const [rows, setRows] = React.useState([]);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [filteredRows, setFilteredRows] = React.useState([]);
-  const [jobs,setJobs] = React.useState<Job>()
-  const router = useRouter();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [rows, setRows] = useState<Job[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredRows, setFilteredRows] = useState<Job[]>([]);
 
-  React.useEffect(async() => {
-    
+  useEffect(() => {
+    const fetchJobs = async () => {
       try {
         const response = await GetJobsList();
-        setJobs(response)
-        console.log(response)
-        const sortedJobs = response.data.results.sort(
-          (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-        );
-        setRows(sortedJobs);
-        setFilteredRows(sortedJobs);
+        const jobs: Job[] = response.results.map((job: any) => ({
+          company_name: job.company_details.company_name,
+          role: job.role,
+          skills: job.skills.join(', '),
+          created_on: new Date(job.updated_at).toLocaleDateString(),
+          job_status: job.job_status,
+        }));
+        setRows(jobs);
+        setFilteredRows(jobs);
       } catch (error) {
-        console.error((error as Error).message);
+        console.error('Error fetching jobs:', error);
       }
-    
+    };
 
-    
+    fetchJobs();
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
     setFilteredRows(
-      rows.filter(
-        (row) =>
-          row.company.toLowerCase().includes(query) ||
-          row.role.toLowerCase().includes(query) ||
-          row.skills.toLowerCase().includes(query) ||
-          row.created_on.toLowerCase().includes(query) ||
-          row.status.toLowerCase().includes(query)
+      rows.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(query)
+        )
       )
     );
   };
@@ -84,90 +80,53 @@ export default function Jobs() {
   };
 
   return (
-    <Paper elevation={0} sx={{ m: { xs: 1, sm: 2, md: 3, p: 2 }, width: '100%', bgcolor: 'white' }}>
-      <Stack
-        sx={{
-          width: '100%',
-          overflowX: 'auto',
-          boxShadow: { xs: 1, sm: 2, md: 3 },
-          '&::-webkit-scrollbar': { display: 'none' },
-          px: 2,
-          bgcolor: 'white',
-        }}
-      >
-        <Stack display={'flex'} justifyContent={'space-between'} direction={'row'} alignItems={'center'} p={2}>
-          <Typography fontSize={25} fontWeight={'bold'} color="primary">
-            Jobs Listing
-          </Typography>
-          <Stack>
-            <Link href="/jobs/create">
-              <Button variant="contained" color="primary">
-                Create
-              </Button>
-            </Link>
-          </Stack>
-        </Stack>
-
-        <Paper
-          elevation={3}
-          sx={{
-            maxWidth: '100%',
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': { display: 'none' },
-            borderRadius: 1,
-            bgcolor: 'white',
-          }}
-        >
-          <Table stickyHeader aria-label="responsive table">
+    <Paper sx={{ width: '100%', overflow: 'hidden', mt: 4 ,mx:3}}>
+      <Stack spacing={2} p={2}>
+        <Typography variant="h5" fontWeight="bold" color="primary">
+          Jobs Listing
+        </Typography>
+        {/* <TextField
+          variant="outlined"
+          placeholder="Search jobs..."
+          value={searchQuery}
+          onChange={handleSearch}
+          size="small"
+          sx={{ width: '100%', maxWidth: 400 }}
+        /> */}
+        <TableContainer>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 {columns.map((column) => (
-                  <TableCell key={column.id} align={column.align}>
+                  <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
                     {column.label}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredRows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      const truncatedText = value?.split(' ').slice(0, 20).join(' ');
-                      const isTruncated = value?.split(' ').length > 20;
-
-                      return (
+              {filteredRows.length > 0 ? (
+                filteredRows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow hover key={index}>
+                      {columns.map((column) => (
                         <TableCell key={column.id} align={column.align}>
-                          {column.id === 'company' ? (
-                            <Link href={`/jobs/${row.jobId}`} underline="hover">
-                              {value}
-                            </Link>
-                          ) : column.id === 'status' ? (
-                            <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
-                              <Tooltip title={isTruncated ? value : ''} placement="bottom-start">
-                                <Typography textOverflow="inherit">
-                                  {truncatedText}
-                                  {isTruncated && '...'}
-                                </Typography>
-                              </Tooltip>
-                              <Button variant="outlined" href="/profiles" sx={{ gap: 2 }}>
-                                Find Profile
-                                <ArrowRightAlt />
-                              </Button>
-                            </Stack>
-                          ) : (
-                            value
-                          )}
+                          {row[column.id]}
                         </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
+                      ))}
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} align="center">
+                    No jobs found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
-        </Paper>
+        </TableContainer>
         <TablePagination
           rowsPerPageOptions={[20]}
           component="div"

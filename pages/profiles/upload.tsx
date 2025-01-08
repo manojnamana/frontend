@@ -25,7 +25,7 @@ const fileTypes = ["JPEG","JPG", "PNG", "PDF","DOCX"]
 
 export default function App() {
     const [files, setFiles] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] =   useState(false);
     const [loading,setLoading] = useState(false)
     const [message ,setMessage] = useState('')
   
@@ -58,12 +58,13 @@ export default function App() {
       try {
         const formData = new FormData();
         files.forEach((file) => {
-          formData.append("resumes", file); // Ensure the key matches your backend's expectations
+          formData.append("resumes", file);
         });
   
         await CreateResume(formData);
         setOpen(true);
         setMessage("Resumes Uploaded");
+        setTimeout(() => navigate.push("/profiles"), 100);
       } catch (error) {
         setOpen(true);
         setMessage((error as Error).message);

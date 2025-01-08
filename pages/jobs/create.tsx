@@ -88,7 +88,6 @@ const CreateJobDetails = () => {
       setDis(true);
     } catch (error) {
       console.error((error as Error).message);
-      setDis(true);
       
     } finally {
       setLoading(false);
