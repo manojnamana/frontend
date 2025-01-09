@@ -19,6 +19,7 @@ import {
 import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
 import IconifyIcon from '@/src/components/icon';
+import { ArrowRightAlt } from '@mui/icons-material';
 
 interface Column {
   id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
@@ -119,7 +120,7 @@ export default function Jobs() {
             <TableHead>
               <TableRow>
                 {columns.map((column) => (
-                  <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                  <TableCell key={column.id} align={column.align} >
                     {column.label}
                   </TableCell>
                 ))}
@@ -146,7 +147,14 @@ export default function Jobs() {
                           )}
                           {column.id === "job_status" && (
                             <TableCell key={column.id} align={column.align}>
+                              
+                              <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                               <Chip sx={{gap:2}}  label={`${value}`}/>
+                              <Button variant="outlined" href={`jobs/matchprofile/${getId}`} sx={{ gap: 2 }}>
+                                Find Profile
+                                <ArrowRightAlt />
+                              </Button>
+                            </Stack>
                               
                           </TableCell>
                           )}

@@ -24,6 +24,6 @@ export const CreateResume = async (formData: FormData) => {
   }
 
   export const GetProfileById = async (id:string)=>{
-    const res = await ApiClient.get(`profile/${id}/`)
+    const res = await ApiClient.get(`api/profile/resume/${id}/`)
     return res.data
   }

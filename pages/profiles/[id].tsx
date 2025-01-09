@@ -16,7 +16,7 @@ const DetailView = () => {
       if (typeof id === 'string') {
         try {
           const response = await GetProfileById(id)
-          setData(response[0])
+          setData(response)
           setLoading(false)
         } catch (error) {
           console.error(error)

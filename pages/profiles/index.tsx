@@ -258,10 +258,11 @@ sx={{boxShadow:2}}
                             {value} 
                             </Link>
                             
-                            </TableCell>):( <TableCell key={column.id} align={column.align}>
-                            {value} 
-                            
-                            </TableCell>)}
+                            </TableCell>):( (column.id !== "name") && 
+                                 <TableCell key={column.id} align={column.align}>
+                                {value} 
+                                
+                                </TableCell>)}
                             </>
                             
                         );

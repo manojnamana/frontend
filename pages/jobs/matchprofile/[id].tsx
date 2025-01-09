@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import { Profile } from '@/types/profile';
 import { GetRelavanentProfile } from '@/pages/api/profile';
 import { tree } from 'next/dist/build/templates/app-page';
+import { West } from '@mui/icons-material';
 
 
 interface Column {
@@ -192,7 +193,7 @@ const Matchedprofiles = () => {
                     </Search>
                     </Stack> */}
 
-                <TableContainer
+                <Paper
 
                 sx={{boxShadow:2}}
                
@@ -229,9 +230,10 @@ const Matchedprofiles = () => {
                                 <>
                                 {column.id === "name" && (
                                 <TableCell key={column.id} align={column.align}>
-                                  <Link href={`profiles/${getId}`} underline='hover'>
+                                  <Button  onClick={()=>{navigate.push(`/profiles/${getId}`)}}>{value}</Button>
+                                  {/* <Link href={`profiles/${getId}`} underline='hover'>
                                   {value}
-                                  </Link>
+                                  </Link> */}
                               </TableCell>
                               )}
                                 {(column.id === "resume_text" || column.id === "status") ?(
@@ -255,10 +257,12 @@ const Matchedprofiles = () => {
                                 {value} 
                                 </Button>
                                 
-                                </TableCell>):( <TableCell key={column.id} align={column.align}>
+                                </TableCell>):( (column.id !== "name") && 
+                                 <TableCell key={column.id} align={column.align}>
                                 {value} 
                                 
-                                </TableCell>)}
+                                </TableCell>)
+                                }
                                 </>
                                 
                             );
@@ -278,7 +282,7 @@ const Matchedprofiles = () => {
                                         </TableRow>)}
                     </TableBody>
                 </Table>
-                </TableContainer>
+                </Paper>
                 <TablePagination
                 rowsPerPageOptions={[20]}
                 component="div"
