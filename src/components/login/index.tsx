@@ -79,12 +79,12 @@ const LoginPage = () => {
     const { email, password } = data
     setLoading(true)
     try {
-      await Login(email,password);
+     await Login(email,password);
       setMessage("Login Success");
       setOpen(true)
       setTimeout(() => navigate.push("/home"), 100);
     } catch (error) {
-      setMessage((error as Error).message);
+      setMessage("Check email and Password");
       setOpen(true)
     } finally {
       setLoading(false);

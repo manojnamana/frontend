@@ -250,6 +250,7 @@ const CollapsibleLibrary = () => {
       <NavMenuItem
         icon={Logout}
         label={isSmallScreen ? 'Logout' : ''}
+        onClick={()=>{setActiveComponent('/'),route.push('/')}}
       />
     </List>
   </Box>
