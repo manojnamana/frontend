@@ -1,6 +1,6 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -96,9 +96,9 @@ const Screen7 = () => {
       setPage(0);
     };
   return (
-    <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
+    <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
 
-        <Paper elevation={3} sx={{mt:3}}>
+        <Stack spacing={2} p={2}>
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -113,16 +113,7 @@ const Screen7 = () => {
                 </Search>
                 </Stack> */}
 
-            <Paper
-            elevation={3}
-            sx={{
-                maxWidth: '100%',
-                overflowX: 'auto',
-                '&::-webkit-scrollbar': { display: 'none' },
-                borderRadius:1,
-                bgcolor:"white",
-                mx:2,mt:6
-            }}
+            <TableContainer sx={{boxShadow:2}}
             >
             <Table stickyHeader aria-label="responsive table" >
                 <TableHead >
@@ -193,7 +184,7 @@ const Screen7 = () => {
                     ))}
                 </TableBody>
             </Table>
-            </Paper>
+            </TableContainer>
             <TablePagination
             rowsPerPageOptions={[20]}
             component="div"
@@ -203,8 +194,8 @@ const Screen7 = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            </Paper>
-    </Stack>
+            </Stack>
+    </Paper>
   )
 }
 

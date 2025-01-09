@@ -1,6 +1,6 @@
 import IconifyIcon from '@/src/components/icon'
 import { ArrowRightAlt } from '@mui/icons-material'
-import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, FormControlLabel, FormGroup, IconButton, InputBase, Link, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React, { use, useState } from 'react'
 import { styled } from '@mui/material/styles';
@@ -149,13 +149,13 @@ const Matchedprofiles = () => {
       setPage(0);
     };
   return (
-    <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
+    <Stack sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
     <Paper elevation={3} sx={{display:"flex",flexDirection:"column",p:2,gap:2}}>
-        <Stack display={"flex"} flexDirection={"row"} gap={4} >
+        <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={4} >
         <Typography fontSize={18}>TechCorp</Typography>
         <Typography fontSize={18}>Software Engineer</Typography>
         </Stack>
-        <Stack display={"flex"} flexDirection={"row"}  gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
+        <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
         <Button variant="outlined" fullWidth  onClick={()=>{setDialogOpen(true)}} startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
                 Upload
               </Button>
@@ -169,12 +169,12 @@ const Matchedprofiles = () => {
 
     </Paper>
 {loading && (
-  <Stack> 
-    <Skeleton variant="rectangular" width={210} height={200} />
-  </Stack>
+    <Stack> 
+        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
+    </Stack>
 
-)}
-{ (relevantProfiles || ans?.w ) &&   <Paper elevation={3} sx={{mt:3}}>
+    )}
+{ (relevantProfiles || ans?.w ) &&   <Paper sx={{p:2,mt:2,gap:2}}>
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -189,16 +189,9 @@ const Matchedprofiles = () => {
                 </Search>
                 </Stack> */}
 
-            <Paper
-            elevation={3}
-            sx={{
-                maxWidth: '100%',
-                overflowX: 'auto',
-                '&::-webkit-scrollbar': { display: 'none' },
-                borderRadius:1,
-                bgcolor:"white",
-                mx:2,mt:6
-            }}
+            <TableContainer
+
+sx={{boxShadow:2}}
             >
             <Table stickyHeader aria-label="responsive table" >
                 <TableHead >
@@ -276,7 +269,7 @@ const Matchedprofiles = () => {
                                     </TableRow>)}
                 </TableBody>
             </Table>
-            </Paper>
+            </TableContainer>
             <TablePagination
             rowsPerPageOptions={[20]}
             component="div"
@@ -300,6 +293,7 @@ const Matchedprofiles = () => {
 
                 <Dialog
         open={Dialogopen}
+        fullWidth
         onClose={handleDialogClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

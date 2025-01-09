@@ -14,6 +14,7 @@ import {
   Button,
   Link,
   Chip,
+  Skeleton,
 } from '@mui/material';
 import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
@@ -40,6 +41,7 @@ export default function Jobs() {
   const [rows, setRows] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredRows, setFilteredRows] = useState<Job[]>([]);
+  const [loading,setLoading] = useState(true)
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -55,6 +57,7 @@ export default function Jobs() {
         }));
         setRows(jobs);
         setFilteredRows(jobs);
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
@@ -86,7 +89,13 @@ export default function Jobs() {
 
   return (
     <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
-      <Stack spacing={2} p={2}>
+      {loading && (
+    <Stack> 
+        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
+    </Stack>
+
+    )}
+      {!loading &&<Stack spacing={2} p={2}>
         <Stack direction={"row"} justifyContent={"space-between"}>
         <Typography variant="h5" fontWeight="bold" color="primary">
           Jobs Listing
@@ -169,7 +178,7 @@ export default function Jobs() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Stack>
+      </Stack>}
     </Paper>
   );
 }

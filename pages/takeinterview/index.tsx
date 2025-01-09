@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {  Chip, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+import {  Chip, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react'
 import { styled } from '@mui/material/styles';
@@ -98,10 +98,10 @@ const TakeInterView = () => {
       setPage(0);
     };
   return (
-    <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%' }}>
+    <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
 
 
- <Paper elevation={3} sx={{pt:6,}}>
+ <Stack spacing={2} p={2}>
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -116,16 +116,9 @@ const TakeInterView = () => {
                 </Search>
                 </Stack> */}
 
-            <Paper
-            elevation={3}
-            sx={{
-                maxWidth: '100%',
-                overflowX: 'auto',
-                '&::-webkit-scrollbar': { display: 'none' },
-                borderRadius:1,
-                bgcolor:"white",
-                mx:2,
-            }}
+            <TableContainer
+
+sx={{boxShadow:2}}
             >
             <Table stickyHeader aria-label="responsive table" >
                 <TableHead >
@@ -196,7 +189,7 @@ const TakeInterView = () => {
                     ))}
                 </TableBody>
             </Table>
-            </Paper>
+            </TableContainer>
             <TablePagination
             rowsPerPageOptions={[20]}
             component="div"
@@ -206,8 +199,8 @@ const TakeInterView = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            </Paper>
-    </Stack>
+            </Stack>
+    </Paper>
   )
 }
 
