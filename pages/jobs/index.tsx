@@ -46,11 +46,12 @@ export default function Jobs() {
       try {
         const response = await GetJobsList();
         const jobs: Job[] = response.map((job: any) => ({
-          company_name: job.job_company_name,
+          job_company_name: job.job_company_name,
           role: job.role,
           skills: job.skills,
           created_at: new Date(job.updated_at).toLocaleDateString(),
           job_status: job.job_status,
+          encrypted_id:job.encrypted_id
         }));
         setRows(jobs);
         setFilteredRows(jobs);
@@ -124,6 +125,7 @@ export default function Jobs() {
                       {columns.map((column) => {
                         const value = row[column.id];
                         const getId = row.encrypted_id
+                        
                         return(
                           <>
                           {column.id === "job_company_name" && (

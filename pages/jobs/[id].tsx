@@ -17,9 +17,9 @@ const DetailView = () => {
       if (typeof id === 'string') {
         try {
           const response = await GetJobsListById(id)
-          setData(response)
+          setData(response[0])
           setLoading(false)
-          console.log(response)
+          console.log(response[0].job_description)
         } catch (error) {
           console.error(error)
         }

@@ -95,6 +95,7 @@ const Matchedprofiles = () => {
         
       }))
         setRows(profilesData)
+        setFilteredRows(profilesData)
         setRelevantProfiles(true)
         setLoading(false)
     }catch(error){
@@ -161,7 +162,7 @@ const Matchedprofiles = () => {
             <Button variant='outlined' fullWidth onClick={()=>{setOpen(true)}} >Fetch from Linkedin</Button>
             <Button variant='outlined' fullWidth  sx={{height:38}}> <Checkbox />
               Include resumes</Button>
-<Button variant='contained' fullWidth onClick={FindRelevant} >Find Relevant Resumes</Button>
+<Button variant='contained' fullWidth onClick={FindRelevant} disabled={relevantProfiles}>Find Relevant Resumes</Button>
         </Stack>
 
         
@@ -230,19 +231,15 @@ const Matchedprofiles = () => {
                     
                         return (
                             <>
-                            {column.id === "resume_text" ?(
+                            {(column.id === "resume_text" || column.id === "status") ?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
-                                <Tooltip title={isTruncated ? value : ''}  placement="bottom-start"  >
-                                {/* <Typography textOverflow="inherit">
-                                    {truncatedText}
-                                    {isTruncated && '...'}
-                                </Typography> */}
                                 
-                                <Chip sx={{gap:2}}  label={'View Resume'}/>
                                 
-                                </Tooltip>
+                                {column.id === "status"?<Chip sx={{gap:2}}  label={`${value}`}/>:<Chip sx={{gap:2}}  label={'View Resume'}/>}
+                                
+
                                 </Stack>
                             
                             </Stack>
