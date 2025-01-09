@@ -277,7 +277,7 @@ sx={{boxShadow:2}}
                     {filteredRows.length <=0 && 
                     (<TableRow>
                                       <TableCell colSpan={columns.length} align="center">
-                                        No jobs found.
+                                        No profiles found.
                                       </TableCell>
                                     </TableRow>)}
                 </TableBody>
