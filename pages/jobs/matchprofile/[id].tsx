@@ -74,7 +74,7 @@ const Matchedprofiles = () => {
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [Dialogopen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
-    const [loading,setLoading] = useState(false)
+    const [loading,setLoading] = useState(true)
 
 
 

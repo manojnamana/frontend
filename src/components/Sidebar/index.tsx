@@ -134,6 +134,10 @@ const CollapsibleLibrary = () => {
         setActiveComponent('/jobs')
         console.log(true)
       }
+      else if (getactive === '/jobs/matchprofile/[id]'){
+        setActiveComponent('/jobs')
+        console.log(true)
+      }
       else if (getactive === '/profiles'){
         setActiveComponent('/profiles')
         console.log(true)
@@ -151,6 +155,10 @@ const CollapsibleLibrary = () => {
         console.log(true)
       }
       else if (getactive === '/takeinterview/upload'){
+        setActiveComponent('/takeinterview')
+        console.log(true)
+      }
+      else if (getactive === '/takeinterview/'){
         setActiveComponent('/takeinterview')
         console.log(true)
       }
