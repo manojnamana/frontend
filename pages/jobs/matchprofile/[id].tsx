@@ -74,7 +74,7 @@ const Matchedprofiles = () => {
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [Dialogopen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
-    const [loading,setLoading] = useState(true)
+    const [loading,setLoading] = useState(false)
 
 
 
@@ -170,7 +170,12 @@ const Matchedprofiles = () => {
         setPage(0);
         };
   return (
-    <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
+    <Stack sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
+      <Stack display={"felx"} flexDirection={"row"} mb={2}>
+              <Button href='/jobs'  sx={{border:1}}  >
+                <West/>
+              </Button>
+            </Stack>
 
     {loading && (
     <Stack> 
@@ -178,7 +183,7 @@ const Matchedprofiles = () => {
     </Stack>
 
     )}
-    { (!loading) &&   <Stack spacing={2} p={2}>
+    { (!loading) &&   <Paper elevation={3} sx={{gap:2,p:2}}>
             {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                     <Search>
                         <SearchIconWrapper>
@@ -193,7 +198,7 @@ const Matchedprofiles = () => {
                     </Search>
                     </Stack> */}
 
-                <Paper
+                <TableContainer
 
                 sx={{boxShadow:2}}
                
@@ -282,8 +287,9 @@ const Matchedprofiles = () => {
                                         </TableRow>)}
                     </TableBody>
                 </Table>
-                </Paper>
+                </TableContainer>
                 <TablePagination
+                sx={{mt:2}}
                 rowsPerPageOptions={[20]}
                 component="div"
                 count={filteredRows.length}
@@ -292,7 +298,7 @@ const Matchedprofiles = () => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-                </Stack>}
+                </Paper>}
 
                 <Dialog
         open={Dialogopen}
@@ -355,7 +361,7 @@ const Matchedprofiles = () => {
           <Button type='submit'>Sechudule</Button>
         </DialogActions>
       </Dialog>
-    </Paper>
+    </Stack>
   )
 }
 
