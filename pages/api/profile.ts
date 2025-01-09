@@ -1,3 +1,4 @@
+import { Api } from "@mui/icons-material";
 import axios from "axios";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,4 +21,9 @@ export const CreateResume = async (formData: FormData) => {
     const res = await ApiClient.get('api/job/find_profile/')
   
     return res.data  
+  }
+
+  export const GetProfileById = async (id:string)=>{
+    const res = await ApiClient.get(`profile/${id}/`)
+    return res.data
   }

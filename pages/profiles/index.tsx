@@ -91,7 +91,8 @@ const Matchedprofiles = () => {
         resume_text:prof.resume_text,
         percentage_matching:prof.percentage_matching,
         status:prof.status,
-        actionTaken:"Schedule Interview"
+        actionTaken:"Schedule Interview",
+        encrypted_profile_id:prof.encrypted_profile_id
         
       }))
         setRows(profilesData)
@@ -218,12 +219,21 @@ sx={{boxShadow:2}}
                     <TableRow hover key={index}>
                         {columns.map((column) => {
                         const value = row[column.id];
+                        const getId = row.encrypted_profile_id
                         const sechuduleInterview =( row.actionTaken === "Schedule Interview" ) 
                         const truncatedText = value?.split(' ').slice(0, 20).join(' ');
                         const isTruncated = value?.split(' ').length > 20;
                     
                         return (
                             <>
+
+                            {column.id === "name" && (
+                                                        <TableCell key={column.id} align={column.align}>
+                                                          <Link href={`profiles/${getId}`} underline='hover'>
+                                                          {value}
+                                                          </Link>
+                                                      </TableCell>
+                                                      )}
                             {(column.id === "resume_text" || column.id === "status") ?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
@@ -238,6 +248,8 @@ sx={{boxShadow:2}}
                             </Stack>
                             
                             </TableCell>):
+
+                            
 
                             (column.id === "actionTaken")&&(sechuduleInterview)  ?
 

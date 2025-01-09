@@ -71,7 +71,7 @@ const Matchedprofiles = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [rows, setRows] = useState<Profile[]>([]);
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
-    const [Dialogopen, setDialogOpen] = useState(true);
+    const [Dialogopen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
     const [loading,setLoading] = useState(true)
 
@@ -90,7 +90,8 @@ const Matchedprofiles = () => {
                 resume_text:prof.resume_text,
                 percentage_matching:prof.percentage_matching,
                 status:prof.status,
-                actionTaken:"Schedule Interview"
+                actionTaken:"Schedule Interview",
+                encrypted_profile_id:prof.encrypted_profile_id
                 
                 }))
                 setRows(profilesData)
@@ -221,10 +222,18 @@ const Matchedprofiles = () => {
                         <TableRow hover key={index}>
                             {columns.map((column) => {
                             const value = row[column.id];
+                            const getId = row.encrypted_profile_id
                             const sechuduleInterview =(( row.actionTaken === "Schedule Interview" ) || ( row.actionTaken === "Reschedule Interview" ) )
                         
                             return (
                                 <>
+                                {column.id === "name" && (
+                                <TableCell key={column.id} align={column.align}>
+                                  <Link href={`profiles/${getId}`} underline='hover'>
+                                  {value}
+                                  </Link>
+                              </TableCell>
+                              )}
                                 {(column.id === "resume_text" || column.id === "status") ?(
                                 <TableCell key={column.id} align={column.align}>
                                     <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
