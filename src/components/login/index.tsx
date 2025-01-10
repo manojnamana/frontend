@@ -24,7 +24,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next/router'
 import Icon from '@/src/components/icon'
 import { Login } from '@/pages/api/login'
-
+import Cookies from 'js-cookie';
 
 
 const schema = yup.object().shape({
@@ -79,9 +79,10 @@ const LoginPage = () => {
     const { email, password } = data
     setLoading(true)
     try {
-     await Login(email,password);
+    const response =  await Login(email,password);
       setMessage("Login Success");
       setOpen(true)
+      Cookies.set('access_token', response.access, { expires: 7 });
       setTimeout(() => navigate.push("/home"), 100);
     } catch (error) {
       setMessage("Check email and Password");
