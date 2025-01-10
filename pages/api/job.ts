@@ -1,4 +1,5 @@
 import axios from "axios";
+import { recruit } from "./apiurls";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,7 +19,7 @@ interface CreateJobData {
 }
 
 export const createJob = async (data: CreateJobData) => {
-  const res =  await ApiClient.post("/api/jobs/create/", data);
+  const res =  await ApiClient.post(`${recruit}/jobs/create/`, data);
   return res.data
 };
 
@@ -37,18 +38,18 @@ interface UpdateJobData {
 }
 
 export const updateJob = async (data:UpdateJobData)=>{
-  const res =  await ApiClient.put(`/api/jobs/update/${data.encrypted_id}/`, data);
+  const res =  await ApiClient.put(`${recruit}/jobs/update/${data.encrypted_id}/`, data);
   return res.data
 
 }
 
 export const GetJobsList = async () => {
-  const res =  await ApiClient.get("/api/jobs/");
+  const res =  await ApiClient.get(`${recruit}/jobs/`);
   return res.data
 };
 
 export const GetJobsListById = async (id:string|null) => {
-  const res =  await ApiClient.get(`/api/jobs/${id}/`);
+  const res =  await ApiClient.get(`${recruit}/jobs/${id}/`);
   return res.data
 };
 
