@@ -44,6 +44,7 @@ import { AccountCircle, Logout, People, Work } from '@mui/icons-material';
 import Admin from '@/pages/home';
 import Jobs from '@/pages/jobs';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 const darkTheme = createTheme({
   palette: {
@@ -250,7 +251,7 @@ const CollapsibleLibrary = () => {
       <NavMenuItem
         icon={Logout}
         label={isSmallScreen ? 'Logout' : ''}
-        onClick={()=>{setActiveComponent('/'),route.push('/')}}
+        onClick={()=>{setActiveComponent('/'),Cookies.remove('access_token'),route.push('/')}}
       />
     </List>
   </Box>
