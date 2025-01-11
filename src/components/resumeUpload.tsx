@@ -17,13 +17,13 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { West } from "@mui/icons-material";
-import { useRouter } from "next/router";
-import { CreateResume } from "../api/profile";
+import { CreateResume } from "@/pages/api/profile";
 
 
-const fileTypes = ["JPEG","JPG", "PNG", "PDF","DOCX"]
 
-export default function App() {
+const fileTypes = [ "PDF","DOCX"]
+
+export default function UploadResume({uploadTrue,setUploadTrue,setIsUploadResume}) {
     const [files, setFiles] = useState([]);
     const [open, setOpen] =   useState(false);
     const [loading,setLoading] = useState(false)
@@ -32,16 +32,16 @@ export default function App() {
 
 
   
-    const handleClose = (
-      event?: React.SyntheticEvent | Event,
-      reason?: SnackbarCloseReason,
-    ) => {
-      if (reason === 'clickaway') {
-        return;
-      }
-  
-      setOpen(false);
-    };
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleChange = (newFiles) => {
 
@@ -63,8 +63,9 @@ export default function App() {
   
         await CreateResume(formData);
         setOpen(true);
+        setUploadTrue(false)
+        setIsUploadResume(true)
         setMessage("Resumes Uploaded");
-        setTimeout(() => navigate.push("/profiles"), 100);
       } catch (error) {
         setOpen(true);
         setMessage((error as Error).message);
@@ -79,17 +80,9 @@ export default function App() {
     }
   };
   
-
+if(uploadTrue){
   return (
-    <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',textAlign:"center",justifyContent:"center"}}>
-      <Stack display={"felx"} flexDirection={"row"} mb={2}>
-                          <Button href='/takeinterview'  sx={{border:1}} >
-                            <West/>
-                          </Button>
-                        </Stack>
-      <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2} >
-        Upload
-      </Typography>
+    <Stack>
       <Paper elevation={3} sx={{p:3,display:"flex", flexDirection:"column",gap:2}}>
         <Stack display={"flex"} justifyContent={"center"} flexDirection={"row"} width={"100%"}>
       <FileUploader
@@ -135,7 +128,7 @@ export default function App() {
             ))}
           </List>
         ) : (
-          <Typography variant="body1" color="textSecondary">
+          <Typography variant="body1" textAlign={"center"} color="textSecondary">
             No files uploaded yet
           </Typography>
         )}
@@ -145,7 +138,7 @@ export default function App() {
 
       <Stack>
         {/* href="/profiles/?w=true" */}
-  <Button variant="contained" onClick={handleUpload} disabled = {loading} >Upload</Button>
+  <Button variant="contained" onClick={handleUpload} disabled = {loading} >Find Relevant Profiles</Button>
 </Stack>
       </Paper>
             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
@@ -161,4 +154,5 @@ export default function App() {
     </Stack>
 
   );
+}
 }

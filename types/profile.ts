@@ -8,6 +8,7 @@ export interface Profile {
     resume_text: string;
     status: string;
     percentage_matching: string;
+    interviewTime:string;
     actionTaken:string
   }
   

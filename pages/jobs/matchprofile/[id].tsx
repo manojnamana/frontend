@@ -1,17 +1,24 @@
+// @ts-nocheck
 import IconifyIcon from '@/src/components/icon'
-import { Alert, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, IconButton, InputBase, InputLabel, Link, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, Typography } from '@mui/material'
-import React, { use, useEffect, useState } from 'react'
+import {  West } from '@mui/icons-material'
+import { Alert, Button, Checkbox, Chip, InputBase, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, Typography } from '@mui/material'
+// import SearchIcon from '@mui/icons-material/Search';
+import React, {  useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 
 import { useRouter } from 'next/router';
 import { Profile } from '@/types/profile';
 import { GetRelavanentProfile } from '@/pages/api/profile';
-import { tree } from 'next/dist/build/templates/app-page';
-import { West } from '@mui/icons-material';
+
+import { Job } from '@/types/job';
+import { GetJobsListById } from '@/pages/api/job';
+import DialogInterView from '@/src/components/Ui/dialogInterView';
+import UploadResume from '@/src/components/resumeUpload';
+
 
 
 interface Column {
-  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'status'|'actionTaken' ;
+  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'actionTaken' |'interviewTime' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -23,7 +30,7 @@ const columns: readonly Column[] = [
   { id: 'email', label: 'Email', minWidth: 200,},
   { id: 'resume_text', label: 'View Resume', minWidth: 200,},
   { id: 'percentage_matching', label: '% Match', minWidth: 200 ,},
-  { id: 'status', label: 'Status', minWidth: 200,},
+  { id: 'interviewTime', label: 'Interview Date&Time', minWidth: 200,},
   { id: 'actionTaken', label: 'Action Taken', minWidth: 200,},
   
 
@@ -72,118 +79,151 @@ const Matchedprofiles = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [rows, setRows] = useState<Profile[]>([]);
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
-    const [Dialogopen, setDialogOpen] = useState(false);
     const [open, setOpen] = useState(false);
-    const [loading,setLoading] = useState(true)
+    const [loading,setLoading] = useState(false)
+    const [uploadTrue,setUploadTrue] = useState(false)
+    const [Dialogopen, setDialogOpen] = useState(false);
+    const [inviewDateUpdated,setInviewDateUpdated] = useState(false);
+    const [data, setData] = useState<Job>()
+    const [textloading,setTextLoading] = useState(true)
+    const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
+    const [isUploadResume,setIsUploadResume] = useState(false)
+    const navigate = useRouter()
 
+    const ans = navigate?.query
+    const jobiId = ans.id 
+    
+      useEffect(() => {
+        const checkId = async () => {
+          if (typeof jobiId === 'string') {
+            try {
+              const response = await GetJobsListById(jobiId)
+              setData(response[0])
+              setTextLoading(false)
+            } catch (error) {
+              console.error(error)
+            }
+          }
+        }
+        checkId()
+      }, [jobiId])
 
+    
 
-        useEffect(()=>{
-        const FindRelevant = async()=>{
+    
+    useEffect(()=>{
+      const FindRelevant = async()=>{
+        setLoading(true)
+        try{
+          
+          const response = await GetRelavanentProfile();
+          const profilesData : Profile[] = response.map((prof:any)=>({
+            name :prof.name,
+            mobile :prof.mobile,
+            email:prof.email,
+            resume_text:prof.resume_text,
+            percentage_matching:prof.percentage_matching,
+            status:prof.status,
+            interviewTime:"2025-18-03",
+            actionTaken:"Schedule Interview",
+            encrypted_profile_id:prof.encrypted_profile_id
             
-            try{
-                
-                const response = await GetRelavanentProfile();
-                const profilesData : Profile[] = response.map((prof:any)=>({
-                name :prof.name,
-                mobile :prof.mobile,
-                email:prof.email,
-                resume_text:prof.resume_text,
-                percentage_matching:prof.percentage_matching,
-                status:prof.status,
-                actionTaken:"Schedule Interview",
-                encrypted_profile_id:prof.encrypted_profile_id
-                
-                }))
-                setRows(profilesData)
-                setFilteredRows(profilesData)
-                setLoading(false)
-            }catch(error){
-                 console.error('Error fetching Profiles:', error);
-            }
-
-            }
-
-            FindRelevant()
-
-        })
+          }))
+            setRows(profilesData)
+            setFilteredRows(profilesData)
+            setLoading(false)
+        }
+        catch(error){
     
+          console.error('Error fetching Profiles:', error);
+        }finally{
+          setLoading(false)
+        }
+    
+      }
+
+      FindRelevant()
+
+    },[isUploadResume ,inviewDateUpdated])
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: SnackbarCloseReason,
+      ) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpen(false);
+
+      };
 
 
 
-        const handleClose = (
-            event?: React.SyntheticEvent | Event,
-            reason?: SnackbarCloseReason,
-            ) => {
-            if (reason === 'clickaway') {
-                return;
-            }
-
-            setOpen(false);
-            setDialogOpen(false)
-
-            };
-        const handleDialogClose = ()=>{
-                setDialogOpen(false)
-            }
 
   
-        const navigate = useRouter()
 
-
-          // Get today's date in 'yyyy-MM-dd' format for the `min` attribute
-  const getTodayDate = () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+  
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+    setFilteredRows(
+      rows.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(query)
+        )
+      )
+    );
   };
 
-  // Get the current time in 'HH:mm' format for the `min` attribute
-  const getCurrentTime = () => {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0'); // 24-hour format
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
+
+  const handleOpenDialog = (profileId: string) => {
+    setSelectedProfileId(profileId); // Set the selected profile ID
+    setDialogOpen(true); // Open the dialog
+};
+  
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
   };
-    
   
-        const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-            const query = event.target.value.toLowerCase();
-            setSearchQuery(query);
-            setFilteredRows(
-            rows.filter((row) =>
-                Object.values(row).some((value) =>
-                String(value).toLowerCase().includes(query)
-                )
-            )
-            );
-        };
-  
-        const handleChangePage = (event: unknown, newPage: number) => {
-            setPage(newPage);
-        };
-  
-        const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-        };
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
   return (
     <Stack sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
-      <Stack display={"felx"} flexDirection={"row"} mb={2}>
-              <Button href='/jobs'  sx={{border:1}}  >
-                <West/>
+            <Stack display={"felx"} flexDirection={"row"} mb={2}>
+                    <Button href='/jobs'  sx={{border:1}}  >
+                      <West/>
+                    </Button>
+                  </Stack>
+    <Paper elevation={3} sx={{display:"flex",flexDirection:"column",p:2,gap:2}}>
+        <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={4} >
+        <Typography fontSize={18}>{textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.job_company_name}`}</Typography>
+        <Typography fontSize={18}>{textloading ? <Skeleton  width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}} /> : `${data?.role}`}</Typography>
+        <Typography fontSize={18}>{textloading ? <Skeleton  width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}} /> : `${data?.skills}`}</Typography>
+        </Stack>
+        <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
+        <Button variant="outlined" fullWidth  onClick={()=>{setUploadTrue(true)}} startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
+                Upload
               </Button>
-            </Stack>
+            <Button variant='outlined' fullWidth onClick={()=>{setOpen(true)}} >Fetch from Linkedin</Button>
+            <Button variant='outlined' fullWidth  sx={{height:38}}> <Checkbox />
+              Include resumes</Button>
+{/* <Button variant='contained' fullWidth onClick={FindRelevant} disabled={relevantProfiles}>Find Relevant Resumes</Button> */}
+        </Stack>
 
-    {loading && (
-    <Stack> 
+        {uploadTrue && <UploadResume uploadTrue={uploadTrue} setUploadTrue ={setUploadTrue} setIsUploadResume={setIsUploadResume} />}
+
+    </Paper>
+{loading && (
+    <Stack my={2}> 
         <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
     </Stack>
 
     )}
-    { (!loading) &&   <Paper elevation={3} sx={{gap:2,p:2}}>
+    { (!loading) &&   <Paper elevation={3} sx={{gap:2,p:2,my:2}}>
             {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                     <Search>
                         <SearchIconWrapper>
@@ -232,43 +272,49 @@ const Matchedprofiles = () => {
                             const sechuduleInterview =(( row.actionTaken === "Schedule Interview" ) || ( row.actionTaken === "Reschedule Interview" ) )
                         
                             return (
-                                <>
-                                {column.id === "name" && (
-                                <TableCell key={column.id} align={column.align}>
-                                  <Button  onClick={()=>{navigate.push(`/profiles/${getId}`)}}>{value}</Button>
-                                  {/* <Link href={`profiles/${getId}`} underline='hover'>
-                                  {value}
-                                  </Link> */}
-                              </TableCell>
+                              <>
+                              {column.id === "name" && (
+                                  <TableCell key={column.id} align={column.align}>
+                                      <Button onClick={() => navigate.push(`/profiles/${getId}`)}>
+                                          {value}
+                                      </Button>
+                                  </TableCell>
                               )}
-                                {(column.id === "resume_text" || column.id === "status") ?(
-                                <TableCell key={column.id} align={column.align}>
-                                    <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
-                                    <Stack maxWidth={400}>
-                                    
-                                    
-                                    {column.id === "status"?<Chip sx={{gap:2}}  label={`${value}`}/>:<Chip sx={{gap:2}}  label={'View Resume'}/>}
-
-                                    </Stack>
-                                
-                                </Stack>
-                                
-                                </TableCell>):
-
-                                (column.id === "actionTaken")&&(sechuduleInterview)  ?
-
-                                ( <TableCell key={column.id} align={column.align}>
-                                <Button onClick={()=>{setDialogOpen(true)}} >
-                                {value} 
-                                </Button>
-                                
-                                </TableCell>):( (column.id !== "name") && 
-                                 <TableCell key={column.id} align={column.align}>
-                                {value} 
-                                
-                                </TableCell>)
-                                }
-                                </>
+                          
+                              {column.id === "interviewTime" && (
+                                  <TableCell key={column.id} align={column.align}>
+                                      {value}
+                                  </TableCell>
+                              )}
+                          
+                              {column.id === "resume_text" ? (
+                                  <TableCell key={column.id} align={column.align}>
+                                      <Stack
+                                          direction={"row"}
+                                          gap={4}
+                                          alignItems={"center"}
+                                          justifyContent={"space-between"}
+                                      >
+                                          <Stack maxWidth={400}>
+                                              <Chip sx={{ gap: 2 }} label={"View Resume"} />
+                                          </Stack>
+                                      </Stack>
+                                  </TableCell>
+                              ) : column.id === "actionTaken" && sechuduleInterview ? (
+                                  <TableCell key={column.id} align={column.align}>
+                                      <Button onClick={() => handleOpenDialog(getId)}>
+                                          {row.interviewTime ==="Not Scheduled"?value:"Resechudule Interview"}
+                                      </Button>
+                                  </TableCell>
+                              ) : column.id !== "name" &&
+                                column.id !== "interviewTime" &&
+                                column.id !== "resume_text" ? (
+                                  <TableCell key={column.id} align={column.align}>
+                                      {value}
+                                  </TableCell>
+                              ) : null}
+                          </>
+                          
                                 
                             );
                             
@@ -299,68 +345,21 @@ const Matchedprofiles = () => {
                 onRowsPerPageChange={handleChangeRowsPerPage}
                 />
                 </Paper>}
+                          
+               {typeof jobiId === "string" && <DialogInterView Dialogopen={Dialogopen} setDialogOpen={setDialogOpen} 
+                setInviewDateUpdated ={setInviewDateUpdated} jobId={jobiId}profileId={selectedProfileId}  />}
+             <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
+                  <Alert
+                    onClose={handleClose}
+                    severity="info"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                  >
+                    Coming Soon...
+                  </Alert>
+                </Snackbar>
 
-                <Dialog
-        open={Dialogopen}
-        onClose={handleDialogClose}
-        fullWidth
-        PaperProps={{
-          component: 'form',
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries((formData as any).entries());
-            const date = formJson.Date;
-            const time = formJson.Time;
-            console.log({ date, time });
-            navigate.push('/takeinterview')
-          },
-        }}
-      >
-        <DialogTitle>Schedule Interview</DialogTitle>
-        <DialogContent>
-          {/* Date Field */}
-          <InputLabel sx={{mt:2}}>Date</InputLabel>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="date"
-            name="Date"
-            
-            type="date"
-            fullWidth
-            variant="outlined"
-            InputProps={{
-              inputProps: {
-                min: getTodayDate(), // Set minimum date to today
-              },
-            }}
-          />
-          {/* Time Field */}
-          <InputLabel sx={{mt:2}}>Time</InputLabel>
 
-          <TextField
-            required
-            margin="dense"
-            id="time"
-            name="Time"
-           
-            type="time"
-            fullWidth
-            variant="outlined"
-            InputProps={{
-              inputProps: {
-                min: getCurrentTime(), // Set minimum time to current time
-              },
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button type='submit'>Sechudule</Button>
-        </DialogActions>
-      </Dialog>
     </Stack>
   )
 }

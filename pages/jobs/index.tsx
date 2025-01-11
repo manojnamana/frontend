@@ -151,7 +151,7 @@ export default function Jobs() {
                               <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                               <Chip sx={{gap:2}}  label={`${value}`}/>
                               <Button variant="outlined" href={`jobs/matchprofile/${getId}`} sx={{ gap: 2 }}>
-                                Find Profile
+                                Find Matching Profile
                                 <ArrowRightAlt />
                               </Button>
                             </Stack>

@@ -139,12 +139,8 @@ const CollapsibleLibrary = () => {
         setActiveComponent('/jobs')
         console.log(true)
       }
-      else if (getactive === '/profiles'){
-        setActiveComponent('/profiles')
-        console.log(true)
-      }
-      else if (getactive === '/profiles/upload'){
-        setActiveComponent('/profiles')
+      else if (getactive === '/profiles/[id]'){
+        setActiveComponent('/jobs')
         console.log(true)
       }
       else if (getactive === '/viewassessmentreport/[id]'){
@@ -213,14 +209,7 @@ const CollapsibleLibrary = () => {
 
         }
       />
-      <NavMenuItem
-        icon={Users2}
-        label={isSmallScreen ? 'Match Profiles' : ''}
-        isActive={activeComponent === '/profiles'}
-        onClick={() => {setActiveComponent('/profiles'),route.push('/profiles')}
 
-        }
-      />
        <NavMenuItem
         icon={Handshake}
         label={isSmallScreen ? 'Take Interview' : ''}
