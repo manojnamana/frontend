@@ -16,8 +16,9 @@ import {
   Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { West } from "@mui/icons-material";
+import { Close, West } from "@mui/icons-material";
 import { CreateResume } from "@/pages/api/profile";
+import { Files } from "lucide-react";
 
 
 
@@ -84,6 +85,9 @@ if(uploadTrue){
   return (
     <Stack>
       <Paper elevation={3} sx={{p:3,display:"flex", flexDirection:"column",gap:2}}>
+        <Stack display={"flex"} direction={"row"} justifyContent={"start"} textAlign={"start"}>
+          <IconButton onClick={()=>setUploadTrue(false)}><Close/></IconButton>
+        </Stack>
         <Stack display={"flex"} justifyContent={"center"} flexDirection={"row"} width={"100%"}>
       <FileUploader
         multiple={true}
@@ -128,16 +132,16 @@ if(uploadTrue){
             ))}
           </List>
         ) : (
-          <Typography variant="body1" textAlign={"center"} color="textSecondary">
-            No files uploaded yet
+          <Typography variant="body1"  color="rgb(170 159 159 / 60%)" sx={{display:"flex",alignItems:"center",gap:2,justifyContent:"center"}}>
+          <Files/>  No files uploaded yet
           </Typography>
         )}
 
 
       </Box>
 
-      <Stack>
-        {/* href="/profiles/?w=true" */}
+      <Stack flexDirection={"row"} justifyContent={"end"}>
+        
   <Button variant="contained" onClick={handleUpload} disabled = {loading} >Find Relevant Profiles</Button>
 </Stack>
       </Paper>

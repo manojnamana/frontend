@@ -1,6 +1,6 @@
 // @ts-nocheck
 import IconifyIcon from '@/src/components/icon'
-import {  West } from '@mui/icons-material'
+import {  Business, West } from '@mui/icons-material'
 import { Alert, Button, Checkbox, Chip, InputBase, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, Typography } from '@mui/material'
 // import SearchIcon from '@mui/icons-material/Search';
 import React, {  useEffect, useState } from 'react'
@@ -14,6 +14,7 @@ import { Job } from '@/types/job';
 import { GetJobsListById } from '@/pages/api/job';
 import DialogInterView from '@/src/components/Ui/dialogInterView';
 import UploadResume from '@/src/components/resumeUpload';
+import { CircleCheckBig, UserRoundCheck } from 'lucide-react';
 
 
 
@@ -157,12 +158,6 @@ const Matchedprofiles = () => {
         setOpen(false);
 
       };
-
-
-
-
-  
-
   
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
@@ -182,6 +177,8 @@ const Matchedprofiles = () => {
     setDialogOpen(true); // Open the dialog
 };
   
+const aiConcepts =(data?.skills)?.split(',')
+console.log(aiConcepts)
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -199,11 +196,61 @@ const Matchedprofiles = () => {
                     </Button>
                   </Stack>
     <Paper elevation={3} sx={{display:"flex",flexDirection:"column",p:2,gap:2}}>
-        <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={4} >
-        <Typography fontSize={18}>{textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.job_company_name}`}</Typography>
-        <Typography fontSize={18}>{textloading ? <Skeleton  width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}} /> : `${data?.role}`}</Typography>
-        <Typography fontSize={18}>{textloading ? <Skeleton  width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}} /> : `${data?.skills}`}</Typography>
-        </Stack>
+
+        <Paper >
+          <Stack sx={{display:'flex',flexDirection:{md:"row",xs:'column',justifyContent:"space-between",alignItems:"center"}}} >
+          <Stack display={"flex"} direction={"row"} alignItems={"center"} m={2} gap={2} >
+            <Paper elevation={0} sx={{display:'flex',p:1,gap:2,alignItems:'center'}}>
+            <Typography fontFamily={18} color='primary' 
+            fontWeight={"bold"} display={"flex"} alignItems={"center"} gap={1}><Business/>Company :</Typography>
+            <Typography fontSize={16}>{textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.job_company_name}`}</Typography>
+            </Paper>
+          </Stack>
+
+          <Stack display={"flex"} direction={"row"} alignItems={"center"} m={2} gap={2} >
+          <Paper elevation={0} sx={{display:'flex',p:1,gap:2,alignItems:'center'}}>
+            <Typography fontFamily={18} color='primary' 
+            fontWeight={"bold"} display={"flex"} alignItems={"center"} gap={1}><UserRoundCheck/>Role :</Typography>
+            <Typography fontSize={16}>{textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.role}`}</Typography>
+          </Paper>
+          </Stack>
+          </Stack>
+
+          <Stack display={"flex"} direction={"row"} alignItems={"center"} ml={2} mb={2}  gap={2} >
+          <Paper elevation={0} sx={{display:'flex',p:1,gap:2,alignItems:'center'}}>
+            <Typography fontFamily={18} color='primary' 
+            fontWeight={"bold"} display={"flex"} alignItems={"center"} gap={1}><CircleCheckBig/>Skills :</Typography>
+            <Typography fontSize={16}>
+  {textloading ? (
+    <Skeleton
+      width={100}
+      height={20}
+      sx={{ bgcolor: "rgb(76 78 100 / 87%)" }}
+    />
+  ) : (
+    aiConcepts.map((concept, index) => (
+      <Chip
+        key={index}
+        label={concept}
+        color="rgb(76 78 100 / 87%)"
+        variant="filled"
+        sx={{
+          fontSize: "1rem",
+          padding: "5px 10px",
+          fontWeight: "bold",
+          margin: "3px",
+        }}
+      />
+    ))
+  )}
+</Typography>
+
+          </Paper>
+          </Stack>
+        </Paper>
+       
+
+
         <Stack display={"flex"} flexDirection={{xs:"column",md:"row"}} gap={2} sx={{justifyContent:"center",alignItems:'center'}}>
         <Button variant="outlined" fullWidth  onClick={()=>{setUploadTrue(true)}} startIcon={<IconifyIcon icon={'mdi:plus'} />} color="primary">
                 Upload
