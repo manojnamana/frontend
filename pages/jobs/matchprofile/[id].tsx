@@ -203,7 +203,8 @@ console.log(aiConcepts)
             <Paper elevation={0} sx={{display:'flex',p:1,gap:2,alignItems:'center'}}>
             <Typography fontFamily={18} color='primary' 
             fontWeight={"bold"} display={"flex"} alignItems={"center"} gap={1}><Business/>Company :</Typography>
-            <Typography fontSize={16}>{textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.job_company_name}`}</Typography>
+            <Typography fontSize={16}>
+              {textloading ? <Skeleton width={100} height={20} sx={{bgcolor:"rgb(76 78 100 / 87%)"}}/> : `${data?.job_company_name}`}</Typography>
             </Paper>
           </Stack>
 
@@ -261,7 +262,8 @@ console.log(aiConcepts)
 {/* <Button variant='contained' fullWidth onClick={FindRelevant} disabled={relevantProfiles}>Find Relevant Resumes</Button> */}
         </Stack>
 
-        {uploadTrue && <UploadResume uploadTrue={uploadTrue} setUploadTrue ={setUploadTrue} setIsUploadResume={setIsUploadResume} />}
+
+       {(typeof jobiId === "string") && (uploadTrue) && <UploadResume uploadTrue={uploadTrue} setUploadTrue ={setUploadTrue} setIsUploadResume={setIsUploadResume} jobId={jobiId} /> }
 
     </Paper>
 {loading && (
@@ -308,7 +310,8 @@ console.log(aiConcepts)
                     </TableHead>
                     <TableBody>
                     {filteredRows.length > 0 
-                    &&(
+                    &&
+                    (
                         filteredRows
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row, index) => (

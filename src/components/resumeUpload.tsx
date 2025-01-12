@@ -24,7 +24,7 @@ import { Files } from "lucide-react";
 
 const fileTypes = [ "PDF","DOCX"]
 
-export default function UploadResume({uploadTrue,setUploadTrue,setIsUploadResume}) {
+export default function UploadResume({uploadTrue,setUploadTrue,setIsUploadResume,jobId}) {
     const [files, setFiles] = useState([]);
     const [open, setOpen] =   useState(false);
     const [loading,setLoading] = useState(false)
@@ -62,7 +62,7 @@ export default function UploadResume({uploadTrue,setUploadTrue,setIsUploadResume
           formData.append("resumes", file);
         });
   
-        await CreateResume(formData);
+        await CreateResume(formData,jobId);
         setOpen(true);
         setUploadTrue(false)
         setIsUploadResume(true)
@@ -100,35 +100,49 @@ if(uploadTrue){
         {files.length > 0 ? (
           <List>
             {files.map((file, index) => (
-              <ListItem key={index} sx={{ display: "flex", alignItems: "center" }}>
-                <ListItemText
-                  primary={file.name}
-                  secondary={file.type.startsWith("image/") ? "Image File" : "Document File"}
-                />
-                {file.type.startsWith("image/") ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    style={{ width: "50px", height: "auto", marginRight: "10px" }}
-                  />
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    href={URL.createObjectURL(file)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ mr: 2 }}
-                  >
-                    View PDF
-                  </Button>
-                )}
-                <ListItemSecondaryAction>
-                  <IconButton edge="end" onClick={() => removeFile(index)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+             <ListItem key={index} sx={{ display: "flex", alignItems: "center" }}>
+             <ListItemText
+               primary={file.name}
+               secondary={file.type.startsWith("image/") ? "Image File" : "Document File"}
+             />
+             {file.type.startsWith("image/") ? (
+               <img
+                 src={URL.createObjectURL(file)}
+                 alt={file.name}
+                 style={{ width: "50px", height: "auto", marginRight: "10px" }}
+               />
+             ) : file.type.startsWith("application/pdf") ? (
+               <Button
+                 variant="outlined"
+                 color="primary"
+                 href={URL.createObjectURL(file)}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 sx={{ mr: 2 }}
+               >
+                 View PDF
+               </Button>
+             ) : file.type.startsWith(
+                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+               ) ? (
+               <Button
+                 variant="outlined"
+                 color="primary"
+                 href={URL.createObjectURL(file)}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 sx={{ mr: 2 }}
+               >
+                 View DOCX
+               </Button>
+             ) : null}
+             <ListItemSecondaryAction>
+               <IconButton edge="end" onClick={() => removeFile(index)} color="error">
+                 <DeleteIcon />
+               </IconButton>
+             </ListItemSecondaryAction>
+           </ListItem>
+           
             ))}
           </List>
         ) : (

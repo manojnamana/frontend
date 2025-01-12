@@ -1,15 +1,17 @@
-// @ts-nocheck
-import {  Chip, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+
+import {  Button, Chip, InputBase, Link, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
-import React from 'react'
+import React, {  useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 
 import { useRouter } from 'next/router';
 import ProfileRows from '@/utils/Demo/profiles';
+import { Recruit } from '@/types/recruit';
+import { GetIntervieScheduledProfiles } from '../api/profile';
 
 
 interface Column {
-  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken' |'interviewDateAndTime'|'takeInterview';
+  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'interviewTime'|'takeInterview';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -19,14 +21,13 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'viewResume', label: 'View Resume', minWidth: 200,},
-  { id: 'match', label: '% Match', minWidth: 200 ,},
-  { id: 'interviewDateAndTime', label: 'Interview Date and Time', minWidth: 200 ,},
+  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
+  { id: 'percentage_matching', label: '% Match', minWidth: 200 ,},
+  { id: 'interviewTime', label: 'Interview Date and Time', minWidth: 200 ,},
   { id: 'takeInterview', label: 'Take Interview', minWidth: 200 ,},
-  
-
- 
 ];
+
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -65,22 +66,59 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const TakeInterView = () => {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(20);
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const [filteredRows, setFilteredRows] = React.useState(ProfileRows);
-    const [relevantProfiles,setRelevantProfiles] = React.useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [rows, setRows] = React.useState<Recruit[]>([]);
+    const [filteredRows, setFilteredRows] = useState<Recruit[]>([]);
+    const [loading,setLoading] = useState(false);
+
   
     const navigate = useRouter()
+
+        useEffect(()=>{
+          const TakeInterview = async()=>{
+            setLoading(true)
+            try{
+              
+              const response = await GetIntervieScheduledProfiles();
+              const profilesData : Recruit[] = response.map((prof:any)=>({
+                name :prof.name,
+                mobile :prof.mobile,
+                email:prof.email,
+                resume_text:prof.resume_text,
+                percentage_matching:prof.percentage_matching,
+                status:prof.status,
+                interviewTime:"2025-18-03",
+                takeInterview:"Take InterView",
+                encrypted_profile_id:prof.encrypted_profile_id
+                
+              }))
+                setRows(profilesData)
+                setFilteredRows(profilesData)
+                setLoading(false)
+            }
+            catch(error){
+        
+              console.error('Error fetching Profiles:', error);
+            }finally{
+              setLoading(false)
+            }
+        
+          }
+    
+          TakeInterview()
+    
+        },[])
   
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
       setFilteredRows(
-          ProfileRows.filter(
+          rows.filter(
           (row) =>
-            row.resumeId.toLowerCase().includes(query) ||
+            row.ProfileId.toLowerCase().includes(query) ||
             row.name.toLowerCase().includes(query) ||
             row.mobile.toLowerCase().includes(query) ||
             row.email.toLowerCase().includes(query) 
@@ -101,7 +139,7 @@ const TakeInterView = () => {
     <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
 
 
- <Stack spacing={2} p={2}>
+
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -115,8 +153,16 @@ const TakeInterView = () => {
                     />
                 </Search>
                 </Stack> */}
+                {loading && (
+    <Stack m={2}> 
+        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
+    </Stack>
 
-            <TableContainer
+    )}
+
+           { (!loading) &&  
+            <Stack spacing={2} p={2}>
+           <TableContainer
 
 sx={{boxShadow:2}}
             >
@@ -137,42 +183,41 @@ sx={{boxShadow:2}}
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {filteredRows
+                {filteredRows.length > 0 
+                    &&
+                (filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => (
                     <TableRow hover  tabIndex={-1} key={index}>
                         {columns.map((column) => {
                         const value = row[column.id] ;
-                        const getId = row.resumeId
-                        const truncatedText = value?.split(' ').slice(0, 20).join(' ');
-                        const isTruncated = value?.split(' ').length > 20;
+                        const getId = row.encrypted_profile_id
                     
                         return (
                             <>
-                            {((column.id === "viewResume")||(column.id === 'takeInterview') )?(
+                            {column.id === "name" && (
+                                  <TableCell key={column.id} align={column.align}>
+                                      <Button onClick={() => navigate.push(`/profiles/${getId}`)}>
+                                          {value}
+                                      </Button>
+                                  </TableCell>
+                              )}
+                            {((column.id === "resume_text")||(column.id === 'takeInterview') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
-                                <Tooltip title={isTruncated ? value : ''}  placement="bottom-start"  >
-                                {/* <Typography textOverflow="inherit">
-                                    {truncatedText}
-                                    {isTruncated && '...'}
-                                </Typography> */}
-                                
-                                
                                 {
                                   (column.id === 'takeInterview') ?(
                                     <Link href={`takeinterview/${getId}`} underline='hover'>Take Interview</Link>
                                   ):(<Chip sx={{gap:2}}  label={'View Resume'}/>)
                                 }
                                 
-                                </Tooltip>
                                 </Stack>
                             
                             </Stack>
                             
                             </TableCell>):
-                            ( <TableCell key={column.id} align={column.align}>
+                            (column.id !== "name" && <TableCell key={column.id} align={column.align}>
                             {value} 
                             
                             </TableCell>)}
@@ -186,7 +231,13 @@ sx={{boxShadow:2}}
                         
                     
                     </TableRow>
-                    ))}
+                    )))}
+                    {filteredRows.length <=0 && 
+                                            (<TableRow>
+                                                            <TableCell colSpan={columns.length} align="center">
+                                                                No profiles found.
+                                                            </TableCell>
+                                                            </TableRow>)}
                 </TableBody>
             </Table>
             </TableContainer>
@@ -199,7 +250,7 @@ sx={{boxShadow:2}}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            </Stack>
+            </Stack>}
     </Paper>
   )
 }

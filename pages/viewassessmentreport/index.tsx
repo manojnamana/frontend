@@ -1,16 +1,16 @@
-import IconifyIcon from '@/src/components/icon'
-import { ArrowRightAlt } from '@mui/icons-material'
-import { Button, Checkbox, Chip, FormControlLabel, FormGroup, InputBase, Link, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search';
-import React from 'react'
-import { styled } from '@mui/material/styles';
 
-import { useRouter } from 'next/router';
-import ProfileRows from '@/utils/Demo/profiles';
+import { AppBar, Button, Checkbox, Chip, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, InputBase, Link, List, ListItemButton, ListItemText, Paper, Skeleton, Slide, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search';
+import React, { useEffect, useState } from 'react'
+import { styled } from '@mui/material/styles';
+import { Recruit } from '@/types/recruit';
+import { GetAssementReportAssignedProfiles } from '../api/profile';
+import { Close } from '@mui/icons-material';
+import { TransitionProps } from '@mui/material/transitions';
 
 
 interface Column {
-  id: 'resumeId' | 'name' | 'mobile' | 'email' | 'viewResume' |'match' |'status'|'actionTaken'|'assessmentReport' ;
+  id:  'name' | 'mobile' | 'email' | 'resume_text'|'assessmentReport' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -20,10 +20,8 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'viewResume', label: 'View Resume', minWidth: 200,},
+  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
   { id: 'assessmentReport', label: 'Assessment Report', minWidth: 200,},
-  
-
  
 ];
 
@@ -63,22 +61,70 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<unknown>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 const Screen7 = () => {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(20);
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const [filteredRows, setFilteredRows] = React.useState(ProfileRows);
-    const [relevantProfiles,setRelevantProfiles] = React.useState(false);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(20);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [dialogOpen,setDialogOpen] = useState(false);
+    const [rows, setRows] = React.useState<Recruit[]>([]);
+    const [filteredRows, setFilteredRows] = useState<Recruit[]>([]);
+    const [loading,setLoading] = useState(false);
+
+    
+    useEffect(()=>{
+      const AssementReport = async()=>{
+        setLoading(true)
+        try{
+          
+          const response = await GetAssementReportAssignedProfiles();
+          const profilesData : Recruit[] = response.map((prof:any)=>({
+            name :prof.name,
+            mobile :prof.mobile,
+            email:prof.email,
+            resume_text:prof.resume_text,
+            percentage_matching:prof.percentage_matching,
+            status:prof.status,
+            interviewTime:"2025-18-03",
+            takeInterview:"Take InterView",
+            assessmentReport:prof.assessmentReport,
+            encrypted_profile_id:prof.encrypted_profile_id
+            
+          }))
+            setRows(profilesData)
+            setFilteredRows(profilesData)
+            setLoading(false)
+        }
+        catch(error){
+          
+    
+          console.error('Error fetching Profiles:', error);
+        }finally{
+          setLoading(false)
+        }
+    
+      }
+
+      AssementReport()
+
+    },[])
+      
   
-    const navigate = useRouter()
   
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
       setFilteredRows(
-          ProfileRows.filter(
+          rows.filter(
           (row) =>
-            row.resumeId.toLowerCase().includes(query) ||
+            row.encrypted_profile_id.toLowerCase().includes(query) ||
             row.name.toLowerCase().includes(query) ||
             row.mobile.toLowerCase().includes(query) ||
             row.email.toLowerCase().includes(query) 
@@ -91,6 +137,9 @@ const Screen7 = () => {
       setPage(newPage);
     };
   
+    const handleClose = ()=>{
+      setDialogOpen(false)
+    }
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
       setRowsPerPage(+event.target.value);
       setPage(0);
@@ -98,7 +147,13 @@ const Screen7 = () => {
   return (
     <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
 
-        <Stack spacing={2} p={2}>
+{loading && (
+    <Stack m={2}> 
+        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
+    </Stack>
+
+    )}
+       {!loading && <Stack spacing={2} p={2}>
         {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
@@ -132,19 +187,20 @@ const Screen7 = () => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {filteredRows
+                {filteredRows.length >0 && 
+                (filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, index) => (
                     <TableRow hover  tabIndex={-1} key={index}>
                         {columns.map((column) => {
                         const value = row[column.id];
-                        const getId = row.resumeId
+                        const getId = row.assessmentReport
                         const truncatedText = value?.split(' ').slice(0, 20).join(' ');
                         const isTruncated = value?.split(' ').length > 20;
                     
                         return (
                             <>
-                            {((column.id === "viewResume") ||(column.id === 'assessmentReport') )?(
+                            {((column.id === "resume_text") ||(column.id === 'assessmentReport') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
@@ -155,10 +211,10 @@ const Screen7 = () => {
                                 </Typography> */}
                                 
                                 
-                                {column.id === "viewResume"?
+                                {column.id === "resume_text"?
                                 <Chip sx={{gap:2}}  label={'View Resume'}/>
                                 :
-                                <Link href={`viewassessmentreport/${getId}`} sx={{gap:2}} underline='hover'  >{'View Report'}</Link>
+                                <Button onClick={()=>setDialogOpen(true)} sx={{gap:2}}   >{'View Report'}</Button>
                                 }
                                 
                                 </Tooltip>
@@ -181,7 +237,13 @@ const Screen7 = () => {
                         
                     
                     </TableRow>
-                    ))}
+                    )))}
+                    {filteredRows.length <=0 && 
+                                            (<TableRow>
+                                                            <TableCell colSpan={columns.length} align="center">
+                                                                No profiles found.
+                                                            </TableCell>
+                                                            </TableRow>)}
                 </TableBody>
             </Table>
             </TableContainer>
@@ -194,7 +256,34 @@ const Screen7 = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             />
-            </Stack>
+            </Stack>}
+
+
+            <Dialog
+        fullWidth
+        open={dialogOpen}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+
+<DialogTitle id="responsive-dialog-title">
+  <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Typography color='primary' fontWeight={"bold"}>Assessment Report</Typography>
+       <Stack display={"flex"} direction={"row"} justifyContent={"start"} textAlign={"start"}>
+                        <IconButton onClick={()=>setDialogOpen(false)}><Close/></IconButton>
+                      </Stack>
+  </Stack>
+          
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+          <Typography>
+          {filteredRows.map((i)=>i.assessmentReport)}
+        </Typography>
+          </DialogContentText>
+        </DialogContent>
+        
+      </Dialog>
     </Paper>
   )
 }

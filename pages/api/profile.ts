@@ -10,14 +10,17 @@ export const ApiClient = axios.create({
 });
 
 
-export const CreateResume = async (formData: FormData) => {
-    const res = await ApiClient.post(`${recruit}/profile/create/`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return res.data;
-  };
+// jobs/matchprofile/[id]
+
+  export const CreateResume = async (formData: FormData,jobId:string) => {
+      const res = await ApiClient.post(`${recruit}/profile/create/${jobId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return res.data;
+    };
+
   
   export const GetRelavanentProfile = async () =>{
     const res = await ApiClient.get(`${recruit}/job/find_profile/`)
@@ -39,3 +42,33 @@ export const CreateResume = async (formData: FormData) => {
     const res =  await ApiClient.put(`${recruit}/${data.JobId}/${data.ProfileId}`,data.interviewTime);
     return res.data
   };
+
+
+
+  //take interview
+
+  export const GetIntervieScheduledProfiles = async () =>{
+    const res = await ApiClient.get(`${recruit}/scheduled-interviews/`)
+    return res.data  
+  }
+
+  export const CreateAssessmetReport = async (formData: FormData,recruitId:string) => {
+    const res = await ApiClient.post(`${recruit}/profile/generate-assessment-report/${recruitId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res.data;
+  };
+
+
+  // Assement Report 
+  
+  export const GetAssementReportAssignedProfiles = async () =>{
+    const res = await ApiClient.get(`${recruit}/assessment-report/`)
+    return res.data  
+  }
+
+
+
+  
