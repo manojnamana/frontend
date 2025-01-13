@@ -53,9 +53,6 @@ export default function UploadTRanscript({isUploaded,setIsUploaded,setIsUploadTr
         setAssessmentData(response?.assessmet_report)
       } catch (error) {
         console.error(error);
-        setIsUploaded(false)
-        
-        setShowAssessment(true)
       } finally {
         setLoading(false);
       }
@@ -76,7 +73,7 @@ export default function UploadTRanscript({isUploaded,setIsUploaded,setIsUploadTr
 
       <Paper elevation={3} sx={{ p: 3, display: "flex", flexDirection: "column", gap: 2,mt:3 }}>
          <Stack display={"flex"} direction={"row"} justifyContent={"start"} textAlign={"start"}>
-                  <IconButton onClick={()=>setIsUploaded(false),setIsUploadTranscript(true)}><Close/></IconButton>
+                  <IconButton onClick={()=>setIsUploaded(false)}><Close/></IconButton>
                 </Stack>
         <Stack display="flex" justifyContent="center" flexDirection="row" width="100%">
           <FileUploader

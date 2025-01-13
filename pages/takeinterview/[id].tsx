@@ -3,7 +3,7 @@ import { AccountCircleOutlined, MarkunreadOutlined, Phone, PhoneOutlined, West }
 import { Button, Paper, Skeleton, Stack, Typography } from '@mui/material'
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
-import { GetProfileById } from '../api/profile';
+import { CreateInterViewQuestions, GetIntervieQues, GetProfileById } from '../api/profile';
 import { Profile } from '@/types/profile';
 
 const questions = [
@@ -24,9 +24,13 @@ const questions = [
 const TakeAssement = () => {
        
   const [isUploaded,setIsUploaded] = useState<Boolean>(false)
-  const [isUploadTranscript,setIsUploadTranscript]= useState<Boolean>(true)
+  const [isUploadTranscript,setIsUploadTranscript]= useState<Boolean>(false)
   const [data, setData] = useState<Profile>()
   const [loading,setLoading] = useState(true)
+  const [questionsData,setQuestionsData] = useState([])
+  const [questionLoading,setQuestionLoading] = useState(true)
+  const [questionsUpdated,setQuestionsUpdated] = useState(false)
+
   const navigate = useRouter()
     
       const ans = navigate?.query
@@ -46,7 +50,34 @@ const TakeAssement = () => {
           }
           checkId()
         }, [recruitId])
-    
+
+        useEffect(() => {
+          const GetIntervieQuestions = async () => {
+            if (typeof recruitId === 'string') {
+              try {
+                const response = await GetIntervieQues(recruitId)
+                setQuestionsData(response.inter_view_questions)
+                setQuestionLoading(false)
+              } catch (error) {
+                console.error(error)
+              }
+            }
+          }
+          GetIntervieQuestions()
+        }, [recruitId,questionsUpdated])
+        
+        const handleGenerateQuestions = async()=>{
+          if (typeof recruitId === 'string') {
+            try {
+              await CreateInterViewQuestions(recruitId)
+              setQuestionsUpdated(true)
+
+            } catch (error) {
+              console.error(error)
+            }
+          }
+
+        }
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
@@ -70,25 +101,82 @@ const TakeAssement = () => {
             </Stack>
 
             <Stack mt={4}>
-              <Paper elevation={3} sx={{p:3,maxHeight:300,overflowY:'auto', '&::-webkit-scrollbar': { display: 'none' },}}>
-        {questions.map((i,index)=>(
-          <Typography>{index+1}. {i}</Typography>
+  <Paper
+    elevation={3}
+    sx={{
+      p: 3,
+      maxHeight: 300,
+      overflowY: 'auto',
+      '&::-webkit-scrollbar': { display: 'none' },
+    }}
+  >
+    <Typography
+      fontSize={20}
+      textAlign="center"
+      fontWeight="bold"
+      color="primary"
+      mb={3}
+    >
+      Interview Questions
+    </Typography>
 
-        ))}
+    {questionLoading && (
+      <Stack my={2}>
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            bgcolor: 'rgb(76 78 100 / 87%)',
+            minHeight: 200,
+            maxHeight: 400,
+          }}
+          width="100%"
+        />
+      </Stack>
+    )}
 
-              </Paper>
-
-
-              <UploadTRanscript isUploaded={isUploaded} setIsUploaded={setIsUploaded} 
-              setIsUploadTranscript={setIsUploadTranscript}
-              recruitId={recruitId}/>
-
-
-
-        {isUploadTranscript &&<Stack direction={"row"} gap={4} mt={4}>
-          <Button variant='contained' onClick={()=>{setIsUploaded(true)}} >Upload Transcript</Button>
-        </Stack>}
+    {!questionLoading &&
+      questionsData?.map((item: string) => {
+        if (item === "Questions not yet generated, click on generate to generate interview question.") {
+          // Set isUploadTranscript to false if the specific message is found
+          
+          return (
+            <Stack key={item}>
+              <Typography>
+                Questions not yet generated, click on generate to generate interview question.
+              </Typography>
+              <Stack flexDirection="row" justifyContent="end">
+                <Button
+                  variant="contained"
+                  onClick={handleGenerateQuestions}
+                  sx={{ mt: 2 }}
+                >
+                  Generate
+                </Button>
+              </Stack>
             </Stack>
+          );
+        }
+        setIsUploadTranscript(true);
+        return <Typography key={item}>{item}</Typography>;
+      })}
+  </Paper>
+
+  <UploadTRanscript
+    isUploaded={isUploaded}
+    setIsUploaded={setIsUploaded}
+    setIsUploadTranscript={setIsUploadTranscript}
+    recruitId={recruitId}
+  />
+
+  {isUploadTranscript && (
+    <Stack direction="row" gap={4} mt={4}>
+      <Button variant="contained" onClick={() => setIsUploaded(true)}>
+        Upload Transcript
+      </Button>
+    </Stack>
+  )}
+</Stack>
+
         </Paper>
     </Stack>
   )

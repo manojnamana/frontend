@@ -52,6 +52,17 @@ export const ApiClient = axios.create({
     return res.data  
   }
 
+  export const GetIntervieQues = async (recruitId:string) =>{
+    const res = await ApiClient.get(`${recruit}/get-interview-ques/${recruitId}/`)
+    return res.data  
+  }
+
+  export const CreateInterViewQuestions = async (recruitId:string) =>{
+    const res = await ApiClient.post(`${recruit}/generate-questions/${recruitId}`,{recruit_id:recruitId})
+    return res.data
+
+  }
+  
   export const CreateAssessmetReport = async (formData: FormData,recruitId:string) => {
     const res = await ApiClient.post(`${recruit}/profile/generate-assessment-report/${recruitId}`, formData, {
       headers: {
