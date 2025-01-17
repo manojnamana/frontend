@@ -94,44 +94,69 @@ const Matchedprofiles = () => {
     const ans = navigate?.query
     const jobiId = ans.id 
     
-      useEffect(() => {
-        const checkId = async () => {
-          if (typeof jobiId === 'string') {
-            try {
-              const response = await GetJobsListById(jobiId)
-              setData(response[0])
-              setTextLoading(false)
-            } catch (error) {
-              console.error(error)
-            }
-          }
-        }
-        checkId()
-      }, [jobiId])
 
+    function formatDateTime(dateTime: string): string {
+      const dateObj = new Date(dateTime);
     
-
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return "not yet scheduled";
+      }
+    
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    
+      return `${year}-${month}-${day}`;
+    }
+    
+    
     
     useEffect(()=>{
       const FindRelevant = async()=>{
         setLoading(true)
+        if (typeof jobiId === 'string') {
         try{
           
-          const response = await GetRelavanentProfile();
-          const profilesData : Profile[] = response.map((prof:any)=>({
-            name :prof.name,
-            mobile :prof.mobile,
-            email:prof.email,
-            resume_text:prof.resume_text,
-            percentage_matching:prof.percentage_matching,
-            status:prof.status,
-            interviewTime:"2025-18-03",
-            actionTaken:"Schedule Interview",
-            encrypted_profile_id:prof.encrypted_profile_id
-            
-          }))
-            setRows(profilesData)
-            setFilteredRows(profilesData)
+          const response = await GetRelavanentProfile(jobiId);
+          setData(response.job_details)
+          setTextLoading(false)
+          const profilesData: Profile[] = response.profiles.map((prof: any) => ({
+            encrypted_profile_id: prof.encrypted_profile_id.toString(),
+            resume_id: prof.resume_id,
+            name: prof.name,
+            mobile: prof.mobile,
+            email: prof.email,
+            role: prof.role,
+            resume_text: prof.resume_text,
+            status: prof.recruitment_profiles?.[0]?.status || "Not Available",
+            percentage_matching: prof.recruitment_profiles?.[0]?.matching_percentage || "0%",
+            interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+              ? formatDateTime(prof.recruitment_profiles[0].interview_time)
+              : "Not Scheduled",
+            actionTaken: "Schedule Interview",
+            recruitment_profiles: prof.recruitment_profiles?.map((recProf: any) => ({
+              id: recProf.id,
+              job_id: recProf.job_id,
+              profile_id: recProf.profile_id,
+              status: recProf.status,
+              questions: recProf.questions,
+              transcript: recProf.transcript,
+              interview_feedback: recProf.interview_feedback,
+              matching_percentage: recProf.matching_percentage,
+              interview_time: recProf.interview_time
+                ? formatDateTime(recProf.interview_time)
+                : "Not Scheduled",
+              interview_link: recProf.interview_link,
+            })) || [],
+          }));
+          
+          
+          setRows(profilesData);
+          setFilteredRows(profilesData);
+          
             setLoading(false)
         }
         catch(error){
@@ -140,12 +165,12 @@ const Matchedprofiles = () => {
         }finally{
           setLoading(false)
         }
-    
+      }
       }
 
       FindRelevant()
 
-    },[isUploadResume ,inviewDateUpdated])
+    },[isUploadResume ,inviewDateUpdated,jobiId])
 
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -172,13 +197,14 @@ const Matchedprofiles = () => {
   };
 
 
-  const handleOpenDialog = (profileId: string) => {
-    setSelectedProfileId(profileId); // Set the selected profile ID
+  const handleOpenDialog = (recruitIDD: string) => {
+    setSelectedProfileId(recruitIDD); // Set the selected profile ID
     setDialogOpen(true); // Open the dialog
+    
 };
   
 const aiConcepts =(data?.skills)?.split(',')
-console.log(aiConcepts)
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -263,7 +289,7 @@ console.log(aiConcepts)
         </Stack>
 
 
-       {(typeof jobiId === "string") && (uploadTrue) && <UploadResume uploadTrue={uploadTrue} setUploadTrue ={setUploadTrue} setIsUploadResume={setIsUploadResume} jobId={jobiId} /> }
+       {(typeof jobiId === "string") && (uploadTrue) && <UploadResume uploadTrue={uploadTrue} setUploadTrue ={setUploadTrue} setIsUploadResume={setIsUploadResume} jobId={data?.encrypted_id} /> }
 
     </Paper>
 {loading && (
@@ -319,6 +345,9 @@ console.log(aiConcepts)
                             {columns.map((column) => {
                             const value = row[column.id];
                             const getId = row.encrypted_profile_id
+                            const recruitIDD = row.recruitment_profiles.map((i)=>i.id)
+                            
+                            
                             const sechuduleInterview =(( row.actionTaken === "Schedule Interview" ) || ( row.actionTaken === "Reschedule Interview" ) )
                         
                             return (
@@ -352,8 +381,8 @@ console.log(aiConcepts)
                                   </TableCell>
                               ) : column.id === "actionTaken" && sechuduleInterview ? (
                                   <TableCell key={column.id} align={column.align}>
-                                      <Button onClick={() => handleOpenDialog(getId)}>
-                                          {row.interviewTime ==="Not Scheduled"?value:"Resechudule Interview"}
+                                      <Button onClick={() => handleOpenDialog(recruitIDD)}>
+                                          {row.interviewTime ==="not yet scheduled"?value:"Resechudule Interview"}
                                       </Button>
                                   </TableCell>
                               ) : column.id !== "name" &&
@@ -396,8 +425,9 @@ console.log(aiConcepts)
                 />
                 </Paper>}
                           
-               {typeof jobiId === "string" && <DialogInterView Dialogopen={Dialogopen} setDialogOpen={setDialogOpen} 
-                setInviewDateUpdated ={setInviewDateUpdated} jobId={jobiId}profileId={selectedProfileId}  />}
+              {selectedProfileId&& <DialogInterView Dialogopen={Dialogopen} setDialogOpen={setDialogOpen} 
+                setInviewDateUpdated ={setInviewDateUpdated} profileId={selectedProfileId}  />}
+                
              <Snackbar open={open}  autoHideDuration={6000} onClose={handleClose}>
                   <Alert
                     onClose={handleClose}

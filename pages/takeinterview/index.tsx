@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import ProfileRows from '@/utils/Demo/profiles';
 import { Recruit } from '@/types/recruit';
 import { GetIntervieScheduledProfiles } from '../api/profile';
+import { Profile } from '@/types/profile';
 
 
 interface Column {
@@ -69,12 +70,28 @@ const TakeInterView = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [searchQuery, setSearchQuery] = useState('');
-    const [rows, setRows] = React.useState<Recruit[]>([]);
-    const [filteredRows, setFilteredRows] = useState<Recruit[]>([]);
+    const [rows, setRows] = React.useState<Profile[]>([]);
+    const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [loading,setLoading] = useState(false);
 
   
     const navigate = useRouter()
+    function formatDateTime(dateTime: string): string {
+      const dateObj = new Date(dateTime);
+    
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return "not yet scheduled";
+      }
+    
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    
+      return `${year}-${month}-${day}`;
+    }
 
         useEffect(()=>{
           const TakeInterview = async()=>{
@@ -82,19 +99,46 @@ const TakeInterView = () => {
             try{
               
               const response = await GetIntervieScheduledProfiles();
-              const profilesData : Recruit[] = response.map((prof:any)=>({
-                name :prof.name,
-                mobile :prof.mobile,
-                email:prof.email,
-                resume_text:prof.resume_text,
-                percentage_matching:prof.percentage_matching,
-                status:prof.status,
-                interviewTime:"2025-18-03",
-                takeInterview:"Take InterView",
-                encrypted_profile_id:prof.encrypted_profile_id
-                
-              }))
+              
+              const profilesData = response.map((item: any) => {
+                const prof = item.profile;
+                const recProfiles = prof.recruitment_profiles;
+              
+                return {
+                  encrypted_profile_id: prof.encrypted_profile_id?.toString(),
+                  resume_id: prof.resume_id,
+                  name: prof.name,
+                  mobile: prof.mobile,
+                  email: prof.email,
+                  role: prof.role,
+                  resume_text: prof.resume_text,
+                  status: recProfiles?.[0]?.status || "Not Available",
+                  percentage_matching: recProfiles?.[0]?.matching_percentage || "0%",
+                  interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+              ? formatDateTime(prof.recruitment_profiles[0].interview_time)
+              : "Not Scheduled",
+                  actionTaken: "Schedule Interview",
+                  recruitment_profiles: recProfiles?.map((recProf: any) => ({
+                    id: recProf.id,
+                    job_id: recProf.job_id,
+                    profile_id: recProf.profile_id,
+                    status: recProf.status,
+                    questions: recProf.questions,
+                    transcript: recProf.transcript,
+                    interview_feedback: recProf.interview_feedback,
+                    matching_percentage: recProf.matching_percentage,
+                    interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+              ? formatDateTime(prof.recruitment_profiles[0].interview_time)
+              : "Not Scheduled",
+                    interview_link: recProf.interview_link,
+                  })) || [],
+                };
+              });
+              
+              console.log(profilesData);
+              
                 setRows(profilesData)
+                console.log(profilesData)
                 setFilteredRows(profilesData)
                 setLoading(false)
             }
@@ -118,7 +162,7 @@ const TakeInterView = () => {
       setFilteredRows(
           rows.filter(
           (row) =>
-            row.ProfileId.toLowerCase().includes(query) ||
+            row.interviewTime.toLowerCase().includes(query) ||
             row.name.toLowerCase().includes(query) ||
             row.mobile.toLowerCase().includes(query) ||
             row.email.toLowerCase().includes(query) 
@@ -183,7 +227,7 @@ sx={{boxShadow:2}}
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                {filteredRows.length > 0 
+                {filteredRows?.length > 0 
                     &&
                 (filteredRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -192,12 +236,14 @@ sx={{boxShadow:2}}
                         {columns.map((column) => {
                         const value = row[column.id] ;
                         const getId = row.encrypted_profile_id
+                        const recruitId = row.recruitment_profiles.map((i)=>(i.id))
+                        console.log(recruitId)
                     
                         return (
                             <>
                             {column.id === "name" && (
                                   <TableCell key={column.id} align={column.align}>
-                                      <Button onClick={() => navigate.push(`/profiles/${getId}`)}>
+                                      <Button onClick={() => navigate.push(`/profiles/${getId}/`)}>
                                           {value}
                                       </Button>
                                   </TableCell>
@@ -208,7 +254,7 @@ sx={{boxShadow:2}}
                                 <Stack maxWidth={400}>
                                 {
                                   (column.id === 'takeInterview') ?(
-                                    <Link href={`takeinterview/${getId}`} underline='hover'>Take Interview</Link>
+                                    <Link href={`takeinterview/${getId}/?recruit=${recruitId}`} underline='hover'>Take Interview</Link>
                                   ):(<Chip sx={{gap:2}}  label={'View Resume'}/>)
                                 }
                                 
@@ -232,7 +278,7 @@ sx={{boxShadow:2}}
                     
                     </TableRow>
                     )))}
-                    {filteredRows.length <=0 && 
+                    {filteredRows?.length <=0 && 
                                             (<TableRow>
                                                             <TableCell colSpan={columns.length} align="center">
                                                                 No profiles found.

@@ -22,13 +22,15 @@ import IconifyIcon from '@/src/components/icon';
 import { ArrowRightAlt } from '@mui/icons-material';
 
 interface Column {
-  id: 'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
+  id: 'encrypted_id'|'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
   label: string;
   minWidth?: number;
   align?: 'right';
 }
 
 const columns: readonly Column[] = [
+   
+  { id: 'encrypted_id', label: 'Job Id', minWidth: 200 },
   { id: 'job_company_name', label: 'Company', minWidth: 200 },
   { id: 'role', label: 'Role', minWidth: 200 },
   { id: 'skills', label: 'Skills', minWidth: 200 },
@@ -54,7 +56,8 @@ export default function Jobs() {
           skills: job.skills,
           created_at: new Date(job.updated_at).toLocaleDateString(),
           job_status: job.job_status,
-          encrypted_id:job.encrypted_id
+          encrypted_id:job.encrypted_id,
+          decrypted_id :job.decrypted_id
         }));
         setRows(jobs);
         setFilteredRows(jobs);
@@ -134,13 +137,14 @@ export default function Jobs() {
                     <TableRow hover key={index}>
                       {columns.map((column) => {
                         const value = row[column.id];
-                        const getId = row.encrypted_id
+                        const EncryptedId = row.encrypted_id
+                        const DecryptedId = row.decrypted_id
                         
                         return(
                           <>
-                          {column.id === "job_company_name" && (
+                          {column.id === "encrypted_id" && (
                             <TableCell key={column.id} align={column.align}>
-                              <Link href={`jobs/${getId}`} underline='hover'>
+                              <Link href={`jobs/${EncryptedId}`} underline='hover'>
                               {value}
                               </Link>
                           </TableCell>
@@ -150,7 +154,7 @@ export default function Jobs() {
                               
                               <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                               <Chip sx={{gap:2}}  label={`${value}`}/>
-                              <Button variant="outlined" href={`jobs/matchprofile/${getId}`} sx={{ gap: 2 }}>
+                              <Button variant="outlined" href={`jobs/matchprofile/${DecryptedId}`} sx={{ gap: 2 }}>
                                 Find Matching Profile
                                 <ArrowRightAlt />
                               </Button>
@@ -158,7 +162,7 @@ export default function Jobs() {
                               
                           </TableCell>
                           )}
-                        {((column.id !== "job_status")&&(column.id !== "job_company_name" )) &&(<TableCell key={column.id} align={column.align}>
+                        {((column.id !== "job_status")&&(column.id !== "encrypted_id" )) &&(<TableCell key={column.id} align={column.align}>
                           {value}
                         </TableCell>)}
                         </>

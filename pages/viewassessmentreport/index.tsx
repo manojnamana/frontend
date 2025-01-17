@@ -7,6 +7,7 @@ import { Recruit } from '@/types/recruit';
 import { GetAssementReportAssignedProfiles } from '../api/profile';
 import { Close } from '@mui/icons-material';
 import { TransitionProps } from '@mui/material/transitions';
+import { Profile } from '@/types/profile';
 
 
 interface Column {
@@ -74,10 +75,26 @@ const Screen7 = () => {
     const [rowsPerPage, setRowsPerPage] = useState(20);
     const [searchQuery, setSearchQuery] = useState('');
     const [dialogOpen,setDialogOpen] = useState(false);
-    const [rows, setRows] = React.useState<Recruit[]>([]);
-    const [filteredRows, setFilteredRows] = useState<Recruit[]>([]);
+    const [rows, setRows] = React.useState<Profile[]>([]);
+    const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [loading,setLoading] = useState(false);
 
+    function formatDateTime(dateTime: string): string {
+      const dateObj = new Date(dateTime);
+    
+      // Check if the date is valid
+      if (isNaN(dateObj.getTime())) {
+        return "not yet scheduled";
+      }
+    
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+    
+      return `${year}-${month}-${day}`;
+    }
     
     useEffect(()=>{
       const AssementReport = async()=>{
@@ -85,19 +102,41 @@ const Screen7 = () => {
         try{
           
           const response = await GetAssementReportAssignedProfiles();
-          const profilesData : Recruit[] = response.map((prof:any)=>({
-            name :prof.name,
-            mobile :prof.mobile,
-            email:prof.email,
-            resume_text:prof.resume_text,
-            percentage_matching:prof.percentage_matching,
-            status:prof.status,
-            interviewTime:"2025-18-03",
-            takeInterview:"Take InterView",
-            assessmentReport:prof.assessmentReport,
-            encrypted_profile_id:prof.encrypted_profile_id
-            
-          }))
+          console.log(response)
+          const profilesData = response.map((item: any) => {
+            const prof = item.profile;
+            const recProfiles = prof.recruitment_profiles;
+          
+            return {
+              encrypted_profile_id: prof.encrypted_profile_id?.toString(),
+              resume_id: prof.resume_id,
+              name: prof.name,
+              mobile: prof.mobile,
+              email: prof.email,
+              role: prof.role,
+              resume_text: prof.resume_text,
+              status: recProfiles?.[0]?.status || "Not Available",
+              percentage_matching: recProfiles?.[0]?.matching_percentage || "0%",
+              interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+          ? formatDateTime(prof.recruitment_profiles[0].interview_time)
+          : "Not Scheduled",
+              actionTaken: "Schedule Interview",
+              recruitment_profiles: recProfiles?.map((recProf: any) => ({
+                id: recProf.id,
+                job_id: recProf.job_id,
+                profile_id: recProf.profile_id,
+                status: recProf.status,
+                questions: recProf.questions,
+                transcript: recProf.transcript,
+                interview_feedback: recProf.interview_feedback,
+                matching_percentage: recProf.matching_percentage,
+                interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+          ? formatDateTime(prof.recruitment_profiles[0].interview_time)
+          : "Not Scheduled",
+                interview_link: recProf.interview_link,
+              })) || [],
+            };
+          });
             setRows(profilesData)
             setFilteredRows(profilesData)
             setLoading(false)
@@ -278,7 +317,7 @@ const Screen7 = () => {
         <DialogContent>
           <DialogContentText>
           <Typography>
-          {filteredRows.map((i)=>i.assessmentReport)}
+          {filteredRows.map((i)=>i.recruitment_profiles.map((i)=>i.interview_feedback))}
         </Typography>
           </DialogContentText>
         </DialogContent>

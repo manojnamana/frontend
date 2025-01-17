@@ -1,5 +1,6 @@
 export interface Job{
   job_company_name:string;
+  decrypted_id:string;
   role: string;
   skills: string;
   project_experience: string;

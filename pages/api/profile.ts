@@ -12,8 +12,8 @@ export const ApiClient = axios.create({
 
 // jobs/matchprofile/[id]
 
-  export const CreateResume = async (formData: FormData,jobId:string) => {
-      const res = await ApiClient.post(`${recruit}/profile/create/${jobId}`, formData, {
+  export const CreateResume = async (formData: FormData,recruitId:string) => {
+      const res = await ApiClient.post(`${recruit}/profile/create/${recruitId}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -22,8 +22,8 @@ export const ApiClient = axios.create({
     };
 
   
-  export const GetRelavanentProfile = async () =>{
-    const res = await ApiClient.get(`${recruit}/job/find_profile/`)
+  export const GetRelavanentProfile = async (jobId:string) =>{
+    const res = await ApiClient.get(`${recruit}/jobs/profiles/${jobId}`)
     return res.data  
   }
 
@@ -33,38 +33,44 @@ export const ApiClient = axios.create({
   }
 
   interface RecruitData {
-    JobId:String,
-    ProfileId:String,
-    interviewTime:String,
+    recruitID:String,
+    interview_time:String,
+
   }
 
   export const UpdateInterViewDateTime = async (data:RecruitData) => {
-    const res =  await ApiClient.put(`${recruit}/${data.JobId}/${data.ProfileId}`,data.interviewTime);
+    const res =  await ApiClient.put(`${recruit}/interview_schedule/${data.recruitID}/`,{interview_time:data.interview_time});
     return res.data
   };
 
 
 
   //take interview
-
   export const GetIntervieScheduledProfiles = async () =>{
-    const res = await ApiClient.get(`${recruit}/scheduled-interviews/`)
+    const res = await ApiClient.get(`${recruit}/interview_candidates/`)
     return res.data  
   }
 
+
+
+  // getInterViewQuestions
   export const GetIntervieQues = async (recruitId:string) =>{
-    const res = await ApiClient.get(`${recruit}/get-interview-ques/${recruitId}/`)
+    const res = await ApiClient.get(`${recruit}/interview_questions/${recruitId}/`)
     return res.data  
   }
 
-  export const CreateInterViewQuestions = async (recruitId:string) =>{
-    const res = await ApiClient.post(`${recruit}/generate-questions/${recruitId}`,{recruit_id:recruitId})
+   // UpdateInterViewQuestions
+  export const UpdateInterViewQuestions = async (recruitId:string) =>{
+    const res = await ApiClient.put(`${recruit}/generate_interview_questions/${recruitId}`,{recruit_id:recruitId})
     return res.data
 
   }
+
+
+  // UpdateAssessmentReport
   
-  export const CreateAssessmetReport = async (formData: FormData,recruitId:string) => {
-    const res = await ApiClient.post(`${recruit}/profile/generate-assessment-report/${recruitId}`, formData, {
+  export const UpdateAssessmentReport = async (formData: FormData,recruitId:string) => {
+    const res = await ApiClient.put(`${recruit}/generate_transcript/${recruitId}/`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -76,7 +82,7 @@ export const ApiClient = axios.create({
   // Assement Report 
   
   export const GetAssementReportAssignedProfiles = async () =>{
-    const res = await ApiClient.get(`${recruit}/assessment-report/`)
+    const res = await ApiClient.get(`${recruit}/interview_feedback/`)
     return res.data  
   }
 

@@ -4,15 +4,15 @@ import React, { useState } from 'react'
 
 
 
-const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,jobiId,profileId}:any) => {
+const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,profileId}:any) => {
         const [selectedDate, setSelectedDate] = useState<string | null>(null);
         const [selectedTime, setSelectedTime] = useState<string | null>(null);
         const [isTimeInvalid, setIsTimeInvalid] = useState<boolean>(false);
+        console.log(Dialogopen,setDialogOpen,setInviewDateUpdated,profileId)
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const date = event.target.value;
         setSelectedDate(date);
-      
         // Reset time if the date is changed
         if (date !== selectedDate) {
           setSelectedTime(null);
@@ -50,15 +50,15 @@ const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,jobiId,p
      const handleSubmit = async(event: React.ChangeEvent<HTMLInputElement>) => {
         event?.preventDefault();
         setDialogOpen(false)
-        const dateTime = `${selectedDate},${selectedTime}`
+        const dateTime = `${selectedDate}T${selectedTime}:00Z`
     
         try{
-          await UpdateInterViewDateTime({interviewTime:dateTime,JobId:jobiId,ProfileId:profileId})
+          await UpdateInterViewDateTime({interview_time:dateTime,recruitID:profileId})
           setInviewDateUpdated(true)
         }
         catch(error){
           console.error(error)
-          setInviewDateUpdated(true)
+          
     
         }
         
