@@ -12,8 +12,8 @@ export const ApiClient = axios.create({
 
 // jobs/matchprofile/[id]
 
-  export const CreateResume = async (formData: FormData,recruitId:string) => {
-      const res = await ApiClient.post(`${recruit}/profile/create/${recruitId}/`, formData, {
+  export const CreateResume = async (formData: FormData,jobId:string) => {
+      const res = await ApiClient.post(`${recruit}/profile/create/${jobId}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
