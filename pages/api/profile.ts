@@ -61,14 +61,13 @@ export const ApiClient = axios.create({
 
    // UpdateInterViewQuestions
   export const UpdateInterViewQuestions = async (recruitId:string) =>{
-    const res = await ApiClient.put(`${recruit}/generate_interview_questions/${recruitId}`,{recruit_id:recruitId})
+    const res = await ApiClient.put(`${recruit}/generate_interview_questions/${recruitId}/`,{recruit_id:recruitId})
     return res.data
 
   }
 
 
   // UpdateAssessmentReport
-  
   export const UpdateAssessmentReport = async (formData: FormData,recruitId:string) => {
     const res = await ApiClient.put(`${recruit}/generate_transcript/${recruitId}/`, formData, {
       headers: {

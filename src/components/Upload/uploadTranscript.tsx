@@ -45,11 +45,11 @@ export default function UploadTRanscript({isUploaded,setIsUploaded,setIsUploadTr
       setLoading(true);
       try {
         const formData = new FormData();
-        formData.append("attachment", file);
+        formData.append("file", file);
        const response =  await UpdateAssessmentReport(formData,recruitId);
         setIsUploaded(false)
         setShowAssessment(true)
-        setAssessmentData(response?.assessmet_report)
+        setAssessmentData(response?.interview_feedback)
       } catch (error) {
         console.error(error);
       } finally {
@@ -133,7 +133,7 @@ export default function UploadTRanscript({isUploaded,setIsUploaded,setIsUploadTr
 
 if(showAssessment){
     return (
-           <Paper sx={{p:3,my:3}}>
+           <Paper sx={{p:3,my:3}} elevation={3}>
                     <Stack gap={2}>
           <Typography fontSize={20} fontWeight={"bold"}  textAlign={"center"} color='#8257dc'>Assessment Report</Typography>
         <Typography fontSize={15}>{assessmentData}</Typography>

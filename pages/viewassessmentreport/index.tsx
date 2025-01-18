@@ -8,16 +8,18 @@ import { GetAssementReportAssignedProfiles } from '../api/profile';
 import { Close } from '@mui/icons-material';
 import { TransitionProps } from '@mui/material/transitions';
 import { Profile } from '@/types/profile';
+import { useRouter } from 'next/router';
 
 
 interface Column {
-  id:  'name' | 'mobile' | 'email' | 'resume_text'|'assessmentReport' ;
+  id:  'job_id'|'name' | 'mobile' | 'email' | 'resume_text'|'assessmentReport' ;
   label: string;
   minWidth?: number;
   align?: 'right';
 }
 
 const columns: readonly Column[] = [
+  { id: 'job_id', label: 'Job Id', minWidth: 200,},
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
@@ -78,6 +80,7 @@ const Screen7 = () => {
     const [rows, setRows] = React.useState<Profile[]>([]);
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [loading,setLoading] = useState(false);
+    const navigate = useRouter()
 
     function formatDateTime(dateTime: string): string {
       const dateObj = new Date(dateTime);
@@ -116,8 +119,10 @@ const Screen7 = () => {
               role: prof.role,
               resume_text: prof.resume_text,
               status: recProfiles?.[0]?.status || "Not Available",
+              job_id :prof.recruitment_profiles?.[0]?.job_id,
               percentage_matching: recProfiles?.[0]?.matching_percentage || "0%",
               interviewTime: prof.recruitment_profiles?.[0]?.interview_time
+              
           ? formatDateTime(prof.recruitment_profiles[0].interview_time)
           : "Not Scheduled",
               actionTaken: "Schedule Interview",
@@ -234,16 +239,27 @@ const Screen7 = () => {
                         {columns.map((column) => {
                         const value = row[column.id];
                         const getId = row.assessmentReport
-                        const truncatedText = value?.split(' ').slice(0, 20).join(' ');
-                        const isTruncated = value?.split(' ').length > 20;
+                        const profileId = row.encrypted_profile_id
+                        const jobID = row.job_id
+                        // const truncatedText = value?.split(' ').slice(0, 20).join(' ');
+                        // const isTruncated = value?.split(' ').length > 20;
                     
                         return (
                             <>
+                             {(column.id === "name" || column.id ==='job_id')&& (
+                                                              <TableCell key={column.id} align={column.align}>
+                                                                 {column.id !=="job_id" ? <Button onClick={() => navigate.push(`/profiles/${profileId}/`)}>
+                                                                      {value}
+                                                                  </Button> : <Button onClick={() => navigate.push(`/jobs/${jobID}/`)}>
+                                                                      {value}
+                                                                  </Button> }
+                                                              </TableCell>
+                                                          )}
                             {((column.id === "resume_text") ||(column.id === 'assessmentReport') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
-                                <Tooltip title={isTruncated ? value : ''}  placement="bottom-start"  >
+                                <Tooltip title={ value }  placement="bottom-start"  >
                                 {/* <Typography textOverflow="inherit">
                                     {truncatedText}
                                     {isTruncated && '...'}
@@ -262,10 +278,10 @@ const Screen7 = () => {
                             </Stack>
                             
                             </TableCell>):
-                            ( <TableCell key={column.id} align={column.align}>
-                            {value} 
-                            
-                            </TableCell>)}
+                            ((column.id !== "name" && column.id !== "job_id") && <TableCell key={column.id} align={column.align}>
+                                                        {value} 
+                                                        
+                                                        </TableCell>)}
                             </>
                             
                         );

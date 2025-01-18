@@ -14,6 +14,7 @@ export interface RecruitmentProfile {
 export interface Profile {
   encrypted_profile_id: string;
   resume_id: string;
+  job_id: number;
   name: string;
   mobile: string;
   email: string;

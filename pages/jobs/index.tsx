@@ -144,7 +144,7 @@ export default function Jobs() {
                           <>
                           {column.id === "encrypted_id" && (
                             <TableCell key={column.id} align={column.align}>
-                              <Link href={`jobs/${EncryptedId}`} underline='hover'>
+                              <Link href={`jobs/${DecryptedId}`} underline='hover'>
                               {value}
                               </Link>
                           </TableCell>

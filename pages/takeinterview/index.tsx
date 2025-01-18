@@ -12,13 +12,14 @@ import { Profile } from '@/types/profile';
 
 
 interface Column {
-  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'interviewTime'|'takeInterview';
+  id: 'job_id'| 'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'interviewTime'|'takeInterview';
   label: string;
   minWidth?: number;
   align?: 'right';
 }
 
 const columns: readonly Column[] = [
+  { id: 'job_id', label: 'Job ID', minWidth: 200,},
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
@@ -114,6 +115,7 @@ const TakeInterView = () => {
                   resume_text: prof.resume_text,
                   status: recProfiles?.[0]?.status || "Not Available",
                   percentage_matching: recProfiles?.[0]?.matching_percentage || "0%",
+                  job_id: recProfiles?.[0]?.job_id,
                   interviewTime: prof.recruitment_profiles?.[0]?.interview_time
               ? formatDateTime(prof.recruitment_profiles[0].interview_time)
               : "Not Scheduled",
@@ -236,16 +238,19 @@ sx={{boxShadow:2}}
                         {columns.map((column) => {
                         const value = row[column.id] ;
                         const getId = row.encrypted_profile_id
+                        const jobID = row.job_id
                         const recruitId = row.recruitment_profiles.map((i)=>(i.id))
                         console.log(recruitId)
                     
                         return (
                             <>
-                            {column.id === "name" && (
+                            {(column.id === "name" || column.id ==='job_id')&& (
                                   <TableCell key={column.id} align={column.align}>
-                                      <Button onClick={() => navigate.push(`/profiles/${getId}/`)}>
+                                     {column.id !=="job_id" ? <Button onClick={() => navigate.push(`/profiles/${getId}/`)}>
                                           {value}
-                                      </Button>
+                                      </Button> : <Button onClick={() => navigate.push(`/jobs/${jobID}/`)}>
+                                          {value}
+                                      </Button> }
                                   </TableCell>
                               )}
                             {((column.id === "resume_text")||(column.id === 'takeInterview') )?(
@@ -263,7 +268,7 @@ sx={{boxShadow:2}}
                             </Stack>
                             
                             </TableCell>):
-                            (column.id !== "name" && <TableCell key={column.id} align={column.align}>
+                            ((column.id !== "name" && column.id !== "job_id") && <TableCell key={column.id} align={column.align}>
                             {value} 
                             
                             </TableCell>)}

@@ -52,7 +52,7 @@ const TakeAssement = () => {
 
   // Update isUploadTranscript based on questionsData
   useEffect(() => {
-    if (questionsData === "Questions not yet generated, click on generate to generate interview question.") {
+    if (questionsData === "No interview questions found for this recruitment.") {
       setIsUploadTranscript(false);
     } else {
       setIsUploadTranscript(true);
@@ -132,10 +132,10 @@ const TakeAssement = () => {
                 />
               </Stack>
             ) : questionsData ===
-              "Questions not yet generated, click on generate to generate interview question." ? (
+              "No interview questions found for this recruitment." ? (
               <Stack spacing={2}>
                 <Typography>
-                  Questions not yet generated, click on generate to generate interview question.
+                No interview questions found for this recruitment.
                 </Typography>
                 <Stack flexDirection="row" justifyContent="flex-end">
                   <Button variant="contained" onClick={handleGenerateQuestions}>

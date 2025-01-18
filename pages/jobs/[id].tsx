@@ -17,9 +17,9 @@ const DetailView = () => {
       if (typeof id === 'string') {
         try {
           const response = await GetJobsListById(id)
-          setData(response[0])
+          setData(response)
           setLoading(false)
-          console.log(response[0].job_description)
+          // console.log(response[0].job_description)
         } catch (error) {
           console.error(error)
         }
@@ -37,7 +37,7 @@ const DetailView = () => {
 
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
       <Stack display={"felx"} flexDirection={"row"}>
-        <Button href='/jobs'  sx={{border:1}} >
+        <Button onClick={()=>router.back()}  sx={{border:1}} >
           <West/>
         </Button>
       </Stack>

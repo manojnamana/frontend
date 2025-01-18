@@ -1,9 +1,10 @@
 
 import { Profile } from '@/types/profile'
-import { Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
+import { Button, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { GetProfileById } from '../api/profile'
+import { West } from '@mui/icons-material'
 
 const DetailView = () => {
   const router = useRouter()
@@ -28,6 +29,11 @@ const DetailView = () => {
 
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
+       <Stack display="flex" flexDirection="row" mb={2}>
+        <Button onClick={()=>router.back()} sx={{ border: 1 }}>
+          <West />
+        </Button>
+      </Stack>
       <Typography variant="h4" color="#8257dc" textAlign="center" fontFamily={"serif"} fontWeight="bold" mb={2}>
         Profile Details
       </Typography>
