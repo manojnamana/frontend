@@ -9,6 +9,7 @@ import { Close } from '@mui/icons-material';
 import { TransitionProps } from '@mui/material/transitions';
 import { Profile } from '@/types/profile';
 import { useRouter } from 'next/router';
+import EvaluteMarkDown from '@/src/components/MarkDown/evaluationCriteria';
 
 
 interface Column {
@@ -333,7 +334,7 @@ const Screen7 = () => {
         <DialogContent>
           <DialogContentText>
           <Typography>
-          {filteredRows.map((i)=>i.recruitment_profiles.map((i)=>i.interview_feedback))}
+          {filteredRows.map((i)=>i.recruitment_profiles.map((i)=>((typeof i.interview_feedback)==="string" &&<EvaluteMarkDown markdownStr={i.interview_feedback} />)))}
         </Typography>
           </DialogContentText>
         </DialogContent>

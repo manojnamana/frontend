@@ -5,12 +5,14 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { GetProfileById } from '../api/profile'
 import { West } from '@mui/icons-material'
+import EvaluteMarkDown from '@/src/components/MarkDown/evaluationCriteria'
 
 const DetailView = () => {
   const router = useRouter()
   const { id } = router.query
   const [data, setData] = useState<Profile>()
   const [loading,setLoading] = useState(true)
+  const [markDown,setMarkdown] = useState<string>('')
 
   useEffect(() => {
     const checkId = async () => {
@@ -18,6 +20,7 @@ const DetailView = () => {
         try {
           const response = await GetProfileById(id)
           setData(response)
+          setMarkdown(response?.resume_text)
           setLoading(false)
         } catch (error) {
           console.error(error)
@@ -60,7 +63,8 @@ const DetailView = () => {
             </Stack>
             <Stack  >
               <><Typography fontSize={18} fontWeight="bold">Resume :</Typography></>
-              <><Typography fontSize={15} color="rgb(76 78 100 / 87%)">{data?.resume_text}</Typography></>
+              {/* <><Typography fontSize={15} color="rgb(76 78 100 / 87%)">{data?.resume_text}</Typography></> */}
+              <EvaluteMarkDown markdownStr={markDown} />
             </Stack>
             </>
             )}

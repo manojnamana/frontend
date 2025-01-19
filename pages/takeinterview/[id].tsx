@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { GetIntervieQues, GetProfileById, UpdateInterViewQuestions } from '../api/profile';
 import { Profile } from '@/types/profile';
+import EvaluteMarkDown from '@/src/components/MarkDown/evaluationCriteria';
 
 const TakeAssement = () => {
   const [isUploaded, setIsUploaded] = useState<Boolean>(false);
@@ -144,7 +145,8 @@ const TakeAssement = () => {
                 </Stack>
               </Stack>
             ) : (
-              <Typography>{questionsData}</Typography>
+              // <Typography>{questionsData}</Typography>
+              <EvaluteMarkDown markdownStr={questionsData} />
             )}
           </Paper>
 
