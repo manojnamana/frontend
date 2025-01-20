@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,profileId}:any) => {
         const [selectedDate, setSelectedDate] = useState<string | null>(null);
-        const [selectedTime, setSelectedTime] = useState<string | null>(null);
+        const [selectedTime, setSelectedTime] = useState<string | null>("00:00");
         const [isTimeInvalid, setIsTimeInvalid] = useState<boolean>(false);
         console.log(Dialogopen,setDialogOpen,setInviewDateUpdated,profileId)
 
@@ -32,6 +32,18 @@ const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,profileI
         }
       };
       
+      const handleFocus = () => {
+        if (selectedTime === "HH:MM") {
+          setSelectedTime(""); // Clear the placeholder value on focus
+        }
+      };
+    
+      const handleBlur = () => {
+        if (selectedTime === "") {
+          setSelectedTime("HH:MM"); // Restore placeholder value if the field is empty
+        }
+      };
+    
       const getCurrentDate = () => {
         const today = new Date();
         return today.toISOString().split("T")[0]; // "yyyy-mm-dd" format
@@ -93,22 +105,23 @@ const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,profileI
   {/* Date Field */}
   <InputLabel sx={{ mt: 2 }}>Date</InputLabel>
   <TextField
-    autoFocus
-    required
-    margin="dense"
-    id="date"
-    name="Date"
-    type="date"
-    value={selectedDate || ""}
-    onChange={handleDateChange}
-    fullWidth
-    variant="outlined"
-    InputProps={{
-      inputProps: {
-        min: getCurrentDate(), // Restrict to today or future dates
-      },
-    }}
-  />
+  autoFocus
+  required
+  margin="dense"
+  id="date"
+  name="Date"
+  type="date"
+  value={selectedDate || ""}
+  onChange={handleDateChange}
+  fullWidth
+  variant="outlined"
+  InputProps={{
+    inputProps: {
+      min: getCurrentDate(), // Restrict to today or future dates
+    },
+  }}
+/>
+
 
   {/* Time Field */}
   <InputLabel sx={{ mt: 2 }}>Time</InputLabel>
@@ -118,9 +131,12 @@ const DialogInterView = ({Dialogopen,setDialogOpen,setInviewDateUpdated,profileI
     id="time"
     name="Time"
     type="time"
+
     value={selectedTime || ""}
     fullWidth
     variant="outlined"
+    onBlur={handleBlur}
+    onFocus={handleFocus}
     error={isTimeInvalid} // Highlight error if time is invalid
     helperText={
       isTimeInvalid

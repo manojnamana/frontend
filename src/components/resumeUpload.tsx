@@ -64,9 +64,12 @@ export default function UploadResume({uploadTrue,setUploadTrue,setIsUploadResume
   
         await CreateResume(formData,jobId);
         setOpen(true);
-        setUploadTrue(false)
-        setIsUploadResume(true)
+        
         setMessage("Resumes Uploaded");
+        setTimeout(() => {
+          setIsUploadResume(true),setUploadTrue(false)
+          ;
+        }, 3000);
       } catch (error) {
         setOpen(true);
         setMessage((error as Error).message);
