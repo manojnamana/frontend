@@ -15,7 +15,7 @@ const validationSchema = Yup.object().shape({
   skills: Yup.string().required('Skills are required'),
   projectExperience: Yup.string().required('Project Experience is required'),
   location: Yup.string().required('Location are required'),
-  otherDetails: Yup.string(),
+  otherDetails: Yup.string().required('otherDetails are required'),
   jobDescription: Yup.string(),
   evaluationCriteria: Yup.string(),
 });

@@ -33,12 +33,12 @@ interface UpdateJobData {
   job_description: string,
   evaluation_criteria: string,
   linkedin_saved:boolean,
-  encrypted_id:string
+  decrypted_id:string
 
 }
 
 export const updateJob = async (data:UpdateJobData)=>{
-  const res =  await ApiClient.put(`${recruit}/jobs/update/${data.encrypted_id}/`, data);
+  const res =  await ApiClient.put(`${recruit}/jobs/update/${data.decrypted_id}/`, data);
   return res.data
 
 }

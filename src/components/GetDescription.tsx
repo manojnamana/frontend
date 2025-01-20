@@ -60,6 +60,7 @@ const GetDescription = ({jobDetails}:any) => {
     const onSave = async(data :FormData) => {
       const {jobDescription, evaluationCriteria} = data
       setLoading(true);
+      console.log(data,"save")
   
       try {
       await updateJob({
@@ -72,7 +73,7 @@ const GetDescription = ({jobDetails}:any) => {
           evaluation_criteria: evaluationCriteria,
           other_details:jobDetails.job.location,
           linkedin_saved:false,
-          encrypted_id:jobDetails.encrypted_id,
+          decrypted_id:jobDetails.job.decrypted_id,
           
         });
         setOpen(true)
@@ -87,6 +88,39 @@ const GetDescription = ({jobDetails}:any) => {
         setLoading(false);
       }
     };
+    
+    
+    const onLinkedin = async(data:FormData)=>{
+      const {jobDescription, evaluationCriteria} = data
+      console.log(data,"linkedin")
+      setLoading(true);
+      try {
+        await updateJob({
+            job_company_name:jobDetails.job.company_name,
+            role:jobDetails.job.role,
+            skills:jobDetails.job.skills,
+            location:jobDetails.job.location,
+            project_experience:jobDetails.job.location,
+            job_description: jobDescription,
+            evaluation_criteria: evaluationCriteria,
+            other_details:jobDetails.job.location,
+            linkedin_saved:true,
+            decrypted_id:jobDetails.job.decrypted_id,
+            
+          });
+          setOpen(true)
+          setMessage('Job Created')
+          setTimeout(() => navigation.push("/jobs"), 100);
+        }catch (error) {
+          setMessage((error as Error).message);
+          
+          setOpen(true)
+          
+        } finally {
+          setLoading(false);
+        }
+
+    }
   return (
     <Stack sx={{ m: { xs: 1, sm: 2, md: 3 ,p:2,}, width: '100%',}}>
       <Stack display={"felx"} flexDirection={"row"}>
@@ -147,9 +181,10 @@ const GetDescription = ({jobDetails}:any) => {
         </Button> 
         </Grid>
         <Grid item xs={12} md={6}>
-        <Button sx={{gap:2}} disabled={loading}   fullWidth onClick={()=>{setOpenLinkedin(true)}} variant="contained" color="primary">
+        <Button sx={{gap:2}} fullWidth disabled={loading}  onClick={handleSubmit(onLinkedin)} variant="contained" color="primary">
        <Linkedin/>   Post On Linkedin
-        </Button> 
+        </Button>
+       
         </Grid>
       </Grid>
 
