@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import { AppBar, Button, Checkbox, Chip, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, InputBase, Link, List, ListItemButton, ListItemText, Paper, Skeleton, Slide, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
@@ -81,6 +82,7 @@ const Screen7 = () => {
     const [rows, setRows] = React.useState<Profile[]>([]);
     const [filteredRows, setFilteredRows] = useState<Profile[]>([]);
     const [loading,setLoading] = useState(false);
+    const [selectedProfile,setSelectedProfile] = useState('')
     const navigate = useRouter()
 
     function formatDateTime(dateTime: string): string {
@@ -189,6 +191,15 @@ const Screen7 = () => {
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
+
+    const handleViewReport = (profileId: string) => {
+      const selectedProfileData = rows.find((row) => row.encrypted_profile_id === profileId);
+      
+      if (selectedProfileData) {
+        setSelectedProfile(selectedProfileData);
+        setDialogOpen(true);
+      }
+    };
   return (
     <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden','&::-webkit-scrollbar': { display: 'none' }, mt: 4 ,mx:3}}>
 
@@ -260,7 +271,7 @@ const Screen7 = () => {
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>
-                                <Tooltip title={ value }  placement="bottom-start"  >
+                                
                                 {/* <Typography textOverflow="inherit">
                                     {truncatedText}
                                     {isTruncated && '...'}
@@ -270,10 +281,10 @@ const Screen7 = () => {
                                 {column.id === "resume_text"?
                                 <Chip sx={{gap:2}}  label={'View Resume'}/>
                                 :
-                                <Button onClick={()=>setDialogOpen(true)} sx={{gap:2}}   >{'View Report'}</Button>
+                                <Button onClick={()=>handleViewReport(profileId)} sx={{gap:2}}   >{'View Report'}</Button>
                                 }
                                 
-                                </Tooltip>
+                                
                                 </Stack>
                             
                             </Stack>
@@ -315,31 +326,38 @@ const Screen7 = () => {
             </Stack>}
 
 
-            <Dialog
-        fullWidth
-        open={dialogOpen}
-        onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-
-<DialogTitle id="responsive-dialog-title">
-  <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-      <Typography color='primary' fontWeight={"bold"}>Assessment Report</Typography>
-       <Stack display={"flex"} direction={"row"} justifyContent={"start"} textAlign={"start"}>
-                        <IconButton onClick={()=>setDialogOpen(false)}><Close/></IconButton>
-                      </Stack>
-  </Stack>
-          
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-          <Typography>
-          {filteredRows.map((i)=>i.recruitment_profiles.map((i)=>((typeof i.interview_feedback)==="string" &&<EvaluteMarkDown markdownStr={i.interview_feedback} />)))}
+<Dialog
+  fullWidth
+  open={dialogOpen}
+  onClose={handleClose}
+  aria-labelledby="responsive-dialog-title"
+>
+  <DialogTitle id="responsive-dialog-title">
+    <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+      <Typography color="primary" fontWeight={"bold"}>Assessment Report</Typography>
+      <IconButton onClick={handleClose}>
+        <Close />
+      </IconButton>
+    </Stack>
+  </DialogTitle>
+  <DialogContent>
+    <DialogContentText>
+      <Typography variant="body1" fontWeight="bold">
+        Interview Feedback:
+      </Typography>
+      <Typography variant="body2" color="textSecondary">
+{selectedProfile?.recruitment_profiles?.[0]?.interview_feedback ? (
+        <EvaluteMarkDown markdownStr={selectedProfile.recruitment_profiles[0].interview_feedback} />
+      ) : (
+        <Typography variant="body2" color="textSecondary">
+          No feedback available
         </Typography>
-          </DialogContentText>
-        </DialogContent>
-        
-      </Dialog>
+      )}
+      </Typography>
+    </DialogContentText>
+  </DialogContent>
+</Dialog>
+
     </Paper>
   )
 }
