@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Linkedin, Save } from 'lucide-react';
-import React from 'react'
+import React, { useState } from 'react'
 import { updateJob } from '@/pages/api/job';
 import { useRouter } from 'next/router';
 
@@ -24,10 +24,11 @@ const validationSchema2 = Yup.object().shape({
 
 
 const GetDescription = ({jobDetails}:any) => {
-    const [open, setOpen] = React.useState(false);
-    const [openLinkedin,setOpenLinkedin] = React.useState(false);
-        const [loading,setLoading] = React.useState(false)
-        const [message ,setMessage] = React.useState('')
+    const [open, setOpen] = useState(false);
+    const [openLinkedin,setOpenLinkedin] = useState(false);
+        const [loading,setLoading] = useState(false)
+        const [message ,setMessage] = useState('')
+        const [linkedinMessage,setLinkedinMessage] = useState('')
         const navigation = useRouter()
     console.log(jobDetails)
     const handleClose = (
@@ -95,7 +96,7 @@ const GetDescription = ({jobDetails}:any) => {
       console.log(data,"linkedin")
       setLoading(true);
       try {
-        await updateJob({
+     const response =    await updateJob({
             job_company_name:jobDetails.job.company_name,
             role:jobDetails.job.role,
             skills:jobDetails.job.skills,
@@ -108,13 +109,14 @@ const GetDescription = ({jobDetails}:any) => {
             decrypted_id:jobDetails.job.decrypted_id,
             
           });
-          setOpen(true)
-          setMessage('Job Created')
+          setOpenLinkedin(true)
+          console.log(response?.message)
+          setLinkedinMessage(`${response?.message}`)
           setTimeout(() => navigation.push("/jobs"), 100);
         }catch (error) {
-          setMessage((error as Error).message);
+          setLinkedinMessage((error as Error).message);
           
-          setOpen(true)
+          setOpenLinkedin(true)
           
         } finally {
           setLoading(false);
@@ -203,11 +205,11 @@ const GetDescription = ({jobDetails}:any) => {
     <Snackbar open={openLinkedin}  autoHideDuration={6000} onClose={handleClose}>
       <Alert
         onClose={handleClose}
-        severity="info"
+        severity={linkedinMessage === "Job updated successfully and posted to LinkedIn"?"success":"error"}
         variant="filled"
         sx={{ width: '100%' }}
       >
-        Coming Soon...
+        {linkedinMessage}
       </Alert>
     </Snackbar>
   </Stack>

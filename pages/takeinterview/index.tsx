@@ -12,7 +12,7 @@ import { Profile } from '@/types/profile';
 
 
 interface Column {
-  id: 'job_id'| 'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'interviewTime'|'takeInterview';
+  id: 'job_id'| 'name' | 'mobile' | 'email' | 'role' |'percentage_matching' |'interviewTime'|'takeInterview';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -23,7 +23,7 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
+  { id: 'role', label: 'Role', minWidth: 200,},
   { id: 'percentage_matching', label: '% Match', minWidth: 200 ,},
   { id: 'interviewTime', label: 'Interview Date and Time', minWidth: 200 ,},
   { id: 'takeInterview', label: 'Take Interview', minWidth: 200 ,},
@@ -246,14 +246,14 @@ sx={{boxShadow:2}}
                             <>
                             {(column.id === "name" || column.id ==='job_id')&& (
                                   <TableCell key={column.id} align={column.align}>
-                                     {column.id !=="job_id" ? <Button onClick={() => navigate.push(`/profiles/${getId}/`)}>
+                                     {column.id !=="job_id" ? <Button sx={{textAlign:'start'}} onClick={() =>  navigate.push(`/profiles/${getId}/`)}>
                                           {value}
-                                      </Button> : <Button onClick={() => navigate.push(`/jobs/${jobID}/`)}>
+                                      </Button> : <Button sx={{textAlign:'start'}} onClick={() => navigate.push(`/jobs/${jobID}/`)}>
                                           {value}
                                       </Button> }
                                   </TableCell>
                               )}
-                            {((column.id === "resume_text")||(column.id === 'takeInterview') )?(
+                            {((column.id === 'takeInterview') )?(
                             <TableCell key={column.id} align={column.align}>
                                 <Stack direction={"row"} gap={4} alignItems={"center"} justifyContent={"space-between"}>
                                 <Stack maxWidth={400}>

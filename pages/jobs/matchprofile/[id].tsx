@@ -19,7 +19,7 @@ import { CircleCheckBig, UserRoundCheck } from 'lucide-react';
 
 
 interface Column {
-  id:  'name' | 'mobile' | 'email' | 'resume_text' |'percentage_matching' |'actionTaken' |'interviewTime' ;
+  id:  'name' | 'mobile' | 'email' | 'role' |'percentage_matching' |'actionTaken' |'interviewTime' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -29,7 +29,7 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
+  { id: 'role', label: 'Role', minWidth: 200,},
   { id: 'percentage_matching', label: '% Match', minWidth: 200 ,},
   { id: 'interviewTime', label: 'Interview Date&Time', minWidth: 200,},
   { id: 'actionTaken', label: 'Action Taken', minWidth: 200,},
@@ -354,7 +354,7 @@ const aiConcepts =(data?.skills)?.split(',')
                               <>
                               {column.id === "name" && (
                                   <TableCell key={column.id} align={column.align}>
-                                      <Button onClick={() => navigate.push(`/profiles/${getId}`)}>
+                                      <Button sx={{textAlign:'start'}} onClick={() => navigate.push(`/profiles/${getId}`)}>
                                           {value}
                                       </Button>
                                   </TableCell>

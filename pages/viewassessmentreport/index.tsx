@@ -14,7 +14,7 @@ import EvaluteMarkDown from '@/src/components/MarkDown/evaluationCriteria';
 
 
 interface Column {
-  id:  'job_id'|'name' | 'mobile' | 'email' | 'resume_text'|'assessmentReport' ;
+  id:  'job_id'|'name' | 'mobile' | 'email' | 'role'|'assessmentReport' ;
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -25,7 +25,7 @@ const columns: readonly Column[] = [
   { id: 'name', label: 'Profile Name', minWidth: 200,},
   { id: 'mobile', label: 'Mobile', minWidth: 200 ,},
   { id: 'email', label: 'Email', minWidth: 200,},
-  { id: 'resume_text', label: 'View Resume', minWidth: 200,},
+  { id: 'role', label: 'Role', minWidth: 200,},
   { id: 'assessmentReport', label: 'Assessment Report', minWidth: 200,},
  
 ];
@@ -260,9 +260,9 @@ const Screen7 = () => {
                             <>
                              {(column.id === "name" || column.id ==='job_id')&& (
                                                               <TableCell key={column.id} align={column.align}>
-                                                                 {column.id !=="job_id" ? <Button onClick={() => navigate.push(`/profiles/${profileId}/`)}>
+                                                                 {column.id !=="job_id" ? <Button sx={{textAlign:'start'}} onClick={() => navigate.push(`/profiles/${profileId}/`)}>
                                                                       {value}
-                                                                  </Button> : <Button onClick={() => navigate.push(`/jobs/${jobID}/`)}>
+                                                                  </Button> : <Button sx={{textAlign:'start'}} onClick={() => navigate.push(`/jobs/${jobID}/`)}>
                                                                       {value}
                                                                   </Button> }
                                                               </TableCell>
