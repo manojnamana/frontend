@@ -86,6 +86,22 @@ export default function Jobs() {
   const [filteredRows, setFilteredRows] = useState<Job[]>([]);
   const [loading,setLoading] = useState(true)
 
+  const formatDateTime = (dateTime: string): string => {
+    const dateObj = new Date(dateTime);
+  
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) {
+      return "not yet scheduled";
+    }
+  
+    // Format date and time
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -94,7 +110,7 @@ export default function Jobs() {
           job_company_name: job.job_company_name,
           role: job.role,
           skills: job.skills,
-          created_at: new Date(job.updated_at).toLocaleDateString(),
+          created_at: formatDateTime(job.updated_at),
           job_status: job.job_status,
           encrypted_id:job.encrypted_id,
           decrypted_id :job.decrypted_id
@@ -110,21 +126,26 @@ export default function Jobs() {
     fetchJobs();
   }, []);
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const query = event.target.value.toLowerCase();
-      setSearchQuery(query);
-      setFilteredRows(
-          rows.filter(
-          (row) =>
-            row.encrypted_id.toLowerCase().includes(query) ||
-          row.job_company_name.toLowerCase().includes(query) ||
-          row.job_status.toLowerCase().includes(query) ||
-          row.skills.toLowerCase().includes(query) ||
-          row.updated_at.toLowerCase().includes(query) ||
-            row.role.toLowerCase().includes(query) 
-        )
-      );
-    };
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value.toLowerCase();
+    setSearchQuery(query);
+  
+    setFilteredRows(
+      rows.filter((row) => {
+        return (
+          row.encrypted_id.toLowerCase().includes(query) || // Match encrypted_id
+          row.job_company_name.toLowerCase().includes(query) || // Match company name
+          row.job_status.toLowerCase().includes(query) || // Match job status
+          row.created_at.includes(query) || // Match formatted date
+          row.skills.toLowerCase().includes(query) || // Match skills
+          row.role.toLowerCase().includes(query) // Match role
+        );
+      })
+    );
+  };
+  
+  
+  
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
