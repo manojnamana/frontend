@@ -1,6 +1,11 @@
 // @ts-nocheck
 
-import { AppBar, Button, Checkbox, Chip, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, FormGroup, IconButton, InputBase, Link, List, ListItemButton, ListItemText, Paper, Skeleton, Slide, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from '@mui/material'
+import { AppBar, Button, Checkbox, Chip, Dialog, DialogContent,
+   DialogContentText, DialogTitle, Divider, FormControlLabel,
+    FormGroup, IconButton, InputBase, Link, List, ListItemButton,
+     ListItemText, Paper, Skeleton, Slide, Stack, Table, TableBody,
+      TableCell, TableContainer, TableHead, TablePagination, TableRow,
+       Toolbar, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
@@ -171,10 +176,11 @@ const Screen7 = () => {
       setFilteredRows(
           rows.filter(
           (row) =>
-            row.encrypted_profile_id.toLowerCase().includes(query) ||
+            row.role.toLowerCase().includes(query) ||
             row.name.toLowerCase().includes(query) ||
             row.mobile.toLowerCase().includes(query) ||
-            row.email.toLowerCase().includes(query) 
+            row.email.toLowerCase().includes(query) ||
+            row.job_id.toString().toLowerCase().includes(query)
   
         )
       );
@@ -210,7 +216,7 @@ const Screen7 = () => {
 
     )}
        {!loading && <Stack spacing={2} p={2}>
-        {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+        <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
                     <SearchIcon  />
@@ -222,7 +228,7 @@ const Screen7 = () => {
                     onChange={handleSearch}
                     />
                 </Search>
-                </Stack> */}
+                </Stack>
 
             <TableContainer sx={{boxShadow:2}}
             >

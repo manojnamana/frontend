@@ -15,11 +15,15 @@ import {
   Link,
   Chip,
   Skeleton,
+  InputBase,
+  styled,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { GetJobsList } from '../api/job';
 import { Job } from '@/types/job';
 import IconifyIcon from '@/src/components/icon';
 import { ArrowRightAlt } from '@mui/icons-material';
+
 
 interface Column {
   id: 'encrypted_id'|'job_company_name' | 'role' | 'skills' | 'created_at' | 'job_status';
@@ -38,6 +42,42 @@ const columns: readonly Column[] = [
   { id: 'job_status', label: 'Status', minWidth: 200 },
 ];
 
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: "whitesmoke",
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'black',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '20ch',
+    // [theme.breakpoints.up('lg')]: {
+    //   width: '20ch',
+    // },
+  },
+}));
 export default function Jobs() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(20);
@@ -70,17 +110,21 @@ export default function Jobs() {
     fetchJobs();
   }, []);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-    setFilteredRows(
-      rows.filter((row) =>
-        Object.values(row).some((value) =>
-          String(value).toLowerCase().includes(query)
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const query = event.target.value.toLowerCase();
+      setSearchQuery(query);
+      setFilteredRows(
+          rows.filter(
+          (row) =>
+            row.encrypted_id.toLowerCase().includes(query) ||
+          row.job_company_name.toLowerCase().includes(query) ||
+          row.job_status.toLowerCase().includes(query) ||
+          row.skills.toLowerCase().includes(query) ||
+          row.updated_at.toLowerCase().includes(query) ||
+            row.role.toLowerCase().includes(query) 
         )
-      )
-    );
-  };
+      );
+    };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -110,14 +154,19 @@ export default function Jobs() {
               </Button>
           </Stack>
         </Stack>
-        {/* <TextField
-          variant="outlined"
-          placeholder="Search jobs..."
-          value={searchQuery}
-          onChange={handleSearch}
-          size="small"
-          sx={{ width: '100%', maxWidth: 400 }}
-        /> */}
+        <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+                <Search>
+                    <SearchIconWrapper>
+                    <SearchIcon  />
+                    </SearchIconWrapper>
+                    <StyledInputBase
+                    placeholder="Search..."
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    />
+                </Search>
+                </Stack>
         <TableContainer sx={{boxShadow:2}}>
           <Table stickyHeader>
             <TableHead>

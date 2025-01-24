@@ -1,12 +1,11 @@
-
-import {  Button, Chip, InputBase, Link, Paper, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography } from '@mui/material'
+// @ts-nocheck
+import {  Button, Chip, InputBase, Link, Paper, Skeleton, Stack, Table,
+   TableBody, TableCell, TableContainer, TableHead, TablePagination,
+    TableRow, Tooltip, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
 import React, {  useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
-
 import { useRouter } from 'next/router';
-import ProfileRows from '@/utils/Demo/profiles';
-import { Recruit } from '@/types/recruit';
 import { GetIntervieScheduledProfiles } from '../api/profile';
 import { Profile } from '@/types/profile';
 
@@ -28,7 +27,6 @@ const columns: readonly Column[] = [
   { id: 'interviewTime', label: 'Interview Date and Time', minWidth: 200 ,},
   { id: 'takeInterview', label: 'Take Interview', minWidth: 200 ,},
 ];
-
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -167,7 +165,8 @@ const TakeInterView = () => {
             row.interviewTime.toLowerCase().includes(query) ||
             row.name.toLowerCase().includes(query) ||
             row.mobile.toLowerCase().includes(query) ||
-            row.email.toLowerCase().includes(query) 
+            row.email.toLowerCase().includes(query) ||
+            row.job_id.toString().toLowerCase().includes(query)
   
         )
       );
@@ -186,7 +185,17 @@ const TakeInterView = () => {
 
 
 
-        {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+
+                {loading && (
+    <Stack m={2}> 
+        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
+    </Stack>
+
+    )}
+
+           { (!loading) &&  
+            <Stack spacing={2} p={2}>
+                <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                 <Search>
                     <SearchIconWrapper>
                     <SearchIcon  />
@@ -198,16 +207,7 @@ const TakeInterView = () => {
                     onChange={handleSearch}
                     />
                 </Search>
-                </Stack> */}
-                {loading && (
-    <Stack m={2}> 
-        <Skeleton variant="rectangular" sx={{bgcolor:"rgb(76 78 100 / 87%)"}} width={'100%'} height={400} />
-    </Stack>
-
-    )}
-
-           { (!loading) &&  
-            <Stack spacing={2} p={2}>
+                </Stack>
            <TableContainer
 
 sx={{boxShadow:2}}

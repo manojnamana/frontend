@@ -1,8 +1,12 @@
 // @ts-nocheck
 import IconifyIcon from '@/src/components/icon'
 import {  Business, West } from '@mui/icons-material'
-import { Alert, Button, Checkbox, Chip, InputBase, Paper, Skeleton, Snackbar, SnackbarCloseReason, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, Typography } from '@mui/material'
-// import SearchIcon from '@mui/icons-material/Search';
+import { Alert, Button, Checkbox, Chip, InputBase,
+   Paper, Skeleton, Snackbar, SnackbarCloseReason,
+    Stack, Table, TableBody, TableCell, TableContainer,
+     TableHead, TablePagination, TableRow, TextField, Tooltip, 
+     Typography } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search';
 import React, {  useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 
@@ -184,18 +188,21 @@ const Matchedprofiles = () => {
 
       };
   
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value.toLowerCase();
-    setSearchQuery(query);
-    setFilteredRows(
-      rows.filter((row) =>
-        Object.values(row).some((value) =>
-          String(value).toLowerCase().includes(query)
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const query = event.target.value.toLowerCase();
+      setSearchQuery(query);
+      setFilteredRows(
+          rows.filter(
+          (row) =>
+            row.interviewTime.toLowerCase().includes(query) ||
+            row.name.toLowerCase().includes(query) ||
+            row.mobile.toLowerCase().includes(query) ||
+            row.email.toLowerCase().includes(query) ||
+            row.percentage_matching.toLowerCase().includes(query) ||
+            row.role.toLowerCase().includes(query) 
         )
-      )
-    );
-  };
-
+      );
+    };
 
   const handleOpenDialog = (recruitIDD: string) => {
     setSelectedProfileId(recruitIDD); // Set the selected profile ID
@@ -299,7 +306,7 @@ const aiConcepts =(data?.skills)?.split(',')
 
     )}
     { (!loading) &&   <Paper elevation={3} sx={{gap:2,p:2,my:2}}>
-            {/* <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
+            <Stack component="form"  direction={'row'} justifyContent={'flex-end'} my={2}>
                     <Search>
                         <SearchIconWrapper>
                         <SearchIcon  />
@@ -311,7 +318,7 @@ const aiConcepts =(data?.skills)?.split(',')
                         onChange={handleSearch}
                         />
                     </Search>
-                    </Stack> */}
+                    </Stack>
 
                 <TableContainer
 

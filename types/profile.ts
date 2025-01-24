@@ -1,7 +1,7 @@
 export interface RecruitmentProfile {
-  id: number;
-  job_id: number;
-  profile_id: number;
+  id: string;
+  job_id: string;
+  profile_id: string;
   status: string;
   questions: string | null;
   transcript: string | null;
@@ -14,7 +14,7 @@ export interface RecruitmentProfile {
 export interface Profile {
   encrypted_profile_id: string;
   resume_id: string;
-  job_id: number;
+  job_id: string;
   name: string;
   mobile: string;
   email: string;
